@@ -1,0 +1,96 @@
+<div class="modal-content-wrapper">
+    <div class="modal-header border-0 pb-0 pt-4 px-4 d-flex flex-column align-items-start position-relative">
+        <div
+            class="icon-box bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center mb-3">
+            <i class="bi bi-list-check fs-3"></i>
+        </div>
+        <h4 class="modal-title fw-bold text-dark mb-1">{{ isEditMode ? 'Edit Task' : 'New Task' }}</h4>
+        <p class="text-muted small">Manage your project tasks effectively.</p>
+
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-4" aria-label="Close"
+            (click)="close()"></button>
+    </div>
+
+    <div class="modal-body px-4 pt-2 pb-4">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control bg-light border-0 shadow-none fw-medium" id="taskName"
+                    placeholder="Task Name" formControlName="title"
+                    [class.is-invalid]="form.get('title')?.invalid && form.get('title')?.touched">
+                <label for="taskName" class="text-secondary">Task Title</label>
+                @if(form.get('title')?.invalid && form.get('title')?.touched) {
+                <div class="invalid-feedback ps-2">
+                    <i class="bi bi-exclamation-circle me-1"></i> Task Title is required
+                </div>
+                }
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select bg-light border-0 shadow-none fw-medium" id="taskPriority"
+                            formControlName="priority">
+                            @for (p of priorities; track p) {
+                            <option [value]="p">{{p}}</option>
+                            }
+                        </select>
+                        <label for="taskPriority" class="text-secondary">Priority</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select class="form-select bg-light border-0 shadow-none fw-medium" id="taskStatus"
+                            formControlName="status">
+                            @for (s of statuses; track s) {
+                            <option [value]="s">{{s}}</option>
+                            }
+                        </select>
+                        <label for="taskStatus" class="text-secondary">Status</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="date" class="form-control bg-light border-0 shadow-none fw-medium" id="dueDate"
+                            placeholder="Due Date" formControlName="dueDate">
+                        <label for="dueDate" class="text-secondary">Due Date</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100 custom-mat-field">
+                        <mat-label>Assigned To</mat-label>
+                        <mat-select formControlName="assignedTo">
+                            @for (u of employees; track u) {
+                            <mat-option [value]="u.id">
+                                {{ u.fullName }}
+                            </mat-option>
+                            }
+                        </mat-select>
+                        @if(form.get('assignedTo')?.invalid && form.get('assignedTo')?.touched) {
+                        <mat-error>Assigned User is required</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="form-floating mb-4">
+                <textarea class="form-control bg-light border-0 shadow-none fw-medium"
+                    placeholder="Leave a description here" id="taskDesc" style="height: 100px"
+                    formControlName="description"></textarea>
+                <label for="taskDesc" class="text-secondary">Description <span
+                        class="text-muted small opacity-50">(Optional)</span></label>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-light text-secondary fw-semibold px-4 py-2 rounded-3"
+                    (click)="close()">Cancel</button>
+                <button type="button" class="btn btn-success fw-bold px-4 py-2 rounded-3 shadow-sm" (click)="submit()"
+                    [disabled]="form.invalid">
+                    {{ isEditMode ? 'Update Task' : 'Create Task' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

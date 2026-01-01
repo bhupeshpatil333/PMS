@@ -9,7 +9,7 @@ export class ProjectService {
   private page$ = new BehaviorSubject<number>(1);
   private search$ = new BehaviorSubject<string>('');
 
-  constructor(private api: BaseApiService) {}
+  constructor(private api: BaseApiService) { }
 
   projects$ = combineLatest([this.page$, this.search$]).pipe(
     switchMap(([page, search]) =>
@@ -32,6 +32,21 @@ export class ProjectService {
 
   createProject(data: any): Observable<any> {
     return this.api.post<any>('projects', data)
+      .pipe(
+        tap(() => this.page$.next(1))
+      );
+  }
+
+  getAllProjects(): Observable<any[]> {
+    return this.api.get<any[]>('projects');
+  }
+
+  getProject(id: number): Observable<any> {
+    return this.api.get<any>(`projects/${id}`);
+  }
+
+  updateProject(id: number, data: any): Observable<any> {
+    return this.api.put<any>(`projects/${id}`, data)
       .pipe(
         tap(() => this.page$.next(1))
       );

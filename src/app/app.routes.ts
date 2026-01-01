@@ -5,13 +5,21 @@ import { ProjectListComponent } from './components/projects/project-list/project
 import { TaskListComponent } from './components/tasks/task-list/task-list.component';
 import { authGuard } from './core/guards/auth.guard';
 import { RegisterComponent } from './components/auth/register/register/register.component';
+import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
-    // { path: 'home', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-    { path: 'projects', component: ProjectListComponent },
-    { path: 'tasks/:projectId', component: TaskListComponent }
+    {
+        path: '',
+        component: MainLayoutComponent,
+        canActivate: [authGuard],
+        children: [
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+            { path: 'dashboard', component: DashboardComponent },
+            { path: 'projects', component: ProjectListComponent },
+            { path: 'tasks/:projectId', component: TaskListComponent }
+        ]
+    }
 ];

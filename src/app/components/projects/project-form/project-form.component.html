@@ -1,0 +1,62 @@
+<div class="modal-content-wrapper">
+    <div class="modal-header border-0 pb-0 pt-4 px-4 d-flex flex-column align-items-start position-relative">
+        <div
+            class="icon-box bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center mb-3">
+            <i class="bi bi-folder-plus fs-3"></i>
+        </div>
+        <h4 class="modal-title fw-bold text-dark mb-1">{{ isEditMode ? 'Edit Project' : 'New Project' }}</h4>
+        <p class="text-muted small">Fill in the details below to {{ isEditMode ? 'update the' : 'create a new' }}
+            project.</p>
+
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-4" aria-label="Close"
+            (click)="close()"></button>
+    </div>
+
+    <div class="modal-body px-4 pt-2 pb-4">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control bg-light border-0 shadow-none fw-medium" id="projectName"
+                            placeholder="Project Name" formControlName="name"
+                            [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched">
+                        <label for="projectName" class="text-secondary">Project Name</label>
+                        @if(form.get('name')?.invalid && form.get('name')?.touched) {
+                        <div class="invalid-feedback ps-2">
+                            <i class="bi bi-exclamation-circle me-1"></i> Project Name is required
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <select class="form-select bg-light border-0 shadow-none fw-medium" id="projectStatus"
+                            formControlName="status">
+                            @for (status of projectStatuses; track status) {
+                            <option [value]="status">{{status}}</option>
+                            }
+                        </select>
+                        <label for="projectStatus" class="text-secondary">Status</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-floating mb-4">
+                <textarea class="form-control bg-light border-0 shadow-none fw-medium"
+                    placeholder="Leave a description here" id="projectDesc" style="height: 120px"
+                    formControlName="description"></textarea>
+                <label for="projectDesc" class="text-secondary">Description <span
+                        class="text-muted small opacity-50">(Optional)</span></label>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-light text-secondary fw-semibold px-4 py-2 rounded-3"
+                    (click)="close()">Cancel</button>
+                <button type="button" class="btn btn-primary fw-bold px-4 py-2 rounded-3 shadow-sm" (click)="submit()"
+                    [disabled]="form.invalid">
+                    {{ isEditMode ? 'Update Project' : 'Create Project' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

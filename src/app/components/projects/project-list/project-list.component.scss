@@ -1,0 +1,43 @@
+.project-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08) !important;
+
+        .btn-outline-primary {
+            background-color: #4361ee;
+            color: #fff;
+            border-color: #4361ee;
+        }
+    }
+}
+
+.project-icon {
+    width: 48px;
+    height: 48px;
+}
+
+.no-arrow::after {
+    display: none;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.decoration-circle {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(67, 97, 238, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    transform: translate(30%, 30%);
+    pointer-events: none;
+}
+
+a {
+    transition: all 0.2s;
+}

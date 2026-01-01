@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BaseApiService } from '../../../core/services/base-api.service';
+
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -14,7 +14,6 @@ export class LoginComponent {
   form: FormGroup;
 
   constructor(
-    private api: BaseApiService,
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router
@@ -26,9 +25,13 @@ export class LoginComponent {
   }
 
   login() {
-    this.api.post('auth/login', this.form.value).subscribe(res => {
-      this.auth.saveSession(res);
-      this.router.navigate(['/dashboard']);
+    this.auth.login(this.form.value).subscribe({
+      next: (res) => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        alert("Login failed");
+      }
     });
   }
 

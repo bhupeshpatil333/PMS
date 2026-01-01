@@ -1,0 +1,84 @@
+$primary-color: #4361ee;
+$secondary-color: #3f37c9;
+$text-secondary: #6c757d;
+$bg-color: #f8f9fa;
+
+:host {
+    display: block;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#wrapper {
+    overflow-x: hidden;
+    background-color: $bg-color;
+    height: 100vh;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    transition: margin 0.25s ease-out;
+    width: 15rem;
+
+    .sidebar-heading {
+        color: $primary-color;
+    }
+
+    .list-group-item {
+        border: none;
+        padding: 20px 30px;
+        color: $text-secondary;
+        transition: all 0.3s;
+
+        &:hover {
+            background-color: rgba($primary-color, 0.05) !important;
+            color: $primary-color;
+        }
+
+        &.active {
+            background-color: transparent;
+            color: $primary-color;
+            border-right: 4px solid $primary-color;
+        }
+    }
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+    width: 100%;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+}
+
+.primary-text {
+    color: $primary-color;
+}
+
+.second-text {
+    color: $secondary-color;
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -15rem;
+    }
+}

@@ -16,4 +16,16 @@ export class TaskService {
   updateStatus(id: number, status: string): Observable<any> {
     return this.api.put(`tasks/${id}/status?status=${status}`);
   }
+
+  createTask(data: any): Observable<any> {
+    return this.api.post('tasks', data);
+  }
+
+  updateTask(id: number, data: any): Observable<any> {
+    return this.api.put(`tasks/${id}`, data);
+  }
+
+  deleteTask(id: number): Observable<any> {
+    return this.api.delete(`tasks/${id}`);
+  }
 }

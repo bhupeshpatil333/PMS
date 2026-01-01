@@ -1,0 +1,58 @@
+<div class="d-flex" id="wrapper" [class.toggled]="isSidebarCollapsed">
+    <!-- Sidebar -->
+    <div class="bg-white border-end" id="sidebar-wrapper">
+        <div class="sidebar-heading text-center py-4 primary-text fs-4 fw-bold text-uppercase border-bottom">
+            <i class="bi bi-kanban me-2"></i>PMS
+        </div>
+        <div class="list-group list-group-flush my-3">
+            <a routerLink="/dashboard" routerLinkActive="active"
+                class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+            </a>
+            <a routerLink="/projects" routerLinkActive="active"
+                class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
+                <i class="bi bi-folder me-2"></i>Projects
+            </a>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent py-4 px-4 border-bottom">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-list primary-text fs-4 me-3" id="menu-toggle" (click)="toggleSidebar()"
+                    role="button"></i>
+                <h2 class="fs-2 m-0 text-dark">Dashboard</h2>
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="ms-auto">
+                    <button mat-button [matMenuTriggerFor]="userMenu" class="d-flex align-items-center gap-2">
+                        <div class="d-flex flex-column text-end lh-1">
+                            <span class="small">{{ (user$ | async)?.fullName || 'User' }}</span>
+                            <span style="font-size: 0.7rem;" class="text-muted fw-normal text-uppercase">{{ (user$ |
+                                async)?.role || 'Member' }}</span>
+                        </div>
+                        <i class="bi bi-person-circle fs-4"></i>
+                    </button>
+                    <mat-menu #userMenu="matMenu">
+                        <button mat-menu-item (click)="logout()">
+                            <i class="bi bi-box-arrow-right me-2"></i>
+                            Logout
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container-fluid px-4">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

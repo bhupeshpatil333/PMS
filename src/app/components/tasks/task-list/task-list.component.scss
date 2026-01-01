@@ -1,0 +1,47 @@
+.kanban-board {
+    min-height: calc(100vh - 160px);
+}
+
+.kanban-column {
+    background-color: #f1f2f6;
+    min-height: 100%;
+}
+
+.task-card {
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    }
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.avatar-small {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+}
+
+.ls-1 {
+    letter-spacing: 1px;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.no-arrow::after {
+    display: none;
+}

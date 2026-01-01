@@ -1,0 +1,44 @@
+.secondary-bg {
+    background-color: rgba(67, 97, 238, 0.1);
+}
+
+.warning-bg {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.success-bg {
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+.danger-bg {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.card {
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+}
+
+.rounded-full {
+    border-radius: 50% !important;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border: 2px solid white;
+}
+
+.table {
+    th {
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}

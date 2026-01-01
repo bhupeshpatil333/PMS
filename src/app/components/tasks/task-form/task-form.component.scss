@@ -1,0 +1,59 @@
+:host {
+    display: block;
+}
+
+.modal-content-wrapper {
+    background: #fff;
+    border-radius: 0;
+}
+
+.icon-box {
+    width: 56px;
+    height: 56px;
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1) rotate(-5deg);
+    }
+}
+
+.form-control,
+.form-select {
+    border-radius: 12px;
+    transition: all 0.2s ease;
+
+    &:focus {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.1) !important; // Green shadow for tasks
+        border: 1px solid rgba(25, 135, 84, 0.3) !important;
+    }
+}
+
+.btn {
+    transition: all 0.2s;
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Custom Material Field Styles */
+::ng-deep .custom-mat-field {
+    .mat-mdc-text-field-wrapper {
+        background-color: #f8f9fa !important;
+        /* Match .bg-light */
+        border-radius: 12px !important;
+        padding-top: 5px;
+        /* Adjust alignment */
+    }
+
+    .mat-mdc-form-field-flex {
+        height: 58px;
+        /* Match form-floating height roughly */
+        align-items: center;
+    }
+
+    .mat-mdc-form-field-underline {
+        display: none;
+    }
+}

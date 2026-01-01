@@ -1,1 +1,87 @@
-<p>dashboard works!</p>
+<div class="row g-4 mb-4" *ngIf="stats$ | async as stats">
+    <!-- Statistic Cards -->
+    <div class="col-md-3">
+        <div class="card p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded-4 border-0">
+            <div>
+                <h3 class="fs-2 text-primary fw-bold">{{stats.total}}</h3>
+                <p class="fs-5 text-secondary mb-0">Projects</p>
+            </div>
+            <i class="bi bi-folder2-open fs-1 primary-text border rounded-full secondary-bg p-3"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded-4 border-0">
+            <div>
+                <h3 class="fs-2 text-warning fw-bold">{{stats.pending}}</h3>
+                <p class="fs-5 text-secondary mb-0">Pending</p>
+            </div>
+            <i class="bi bi-clock-history fs-1 text-warning border rounded-full warning-bg p-3"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded-4 border-0">
+            <div>
+                <h3 class="fs-2 text-success fw-bold">{{stats.completed}}</h3>
+                <p class="fs-5 text-secondary mb-0">Completed</p>
+            </div>
+            <i class="bi bi-check2-circle fs-1 text-success border rounded-full success-bg p-3"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded-4 border-0">
+            <div>
+                <h3 class="fs-2 text-danger fw-bold">{{stats.onHold}}</h3>
+                <p class="fs-5 text-secondary mb-0">On Hold</p>
+            </div>
+            <i class="bi bi-pause-circle fs-1 text-danger border rounded-full danger-bg p-3"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row my-5">
+    <h3 class="fs-4 mb-3 text-secondary">Recent Projects</h3>
+    <div class="col">
+        <div class="table-responsive shadow-sm bg-white rounded-4 p-4 border-0">
+            <table class="table table-hover align-middle bg-white mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th scope="col" class="text-secondary ps-4">Project Name</th>
+                        <th scope="col" class="text-secondary">Description</th>
+                        <th scope="col" class="text-secondary">Status</th>
+                        <th scope="col" class="text-secondary">Action</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="stats$ | async as stats">
+                    @for (project of stats.recent; track project.id) {
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">{{project.name}}</td>
+                        <td>
+                            <span class="text-muted small">{{project.description || 'No description'}}</span>
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill px-3"
+                                [class.bg-primary-subtle]="project.status === 'In Progress'"
+                                [class.text-primary]="project.status === 'In Progress'"
+                                [class.bg-success-subtle]="project.status === 'Completed'"
+                                [class.text-success]="project.status === 'Completed'"
+                                [class.bg-warning-subtle]="project.status === 'Pending'"
+                                [class.text-warning]="project.status === 'Pending'"
+                                [class.bg-danger-subtle]="project.status === 'On Hold'"
+                                [class.text-danger]="project.status === 'On Hold'">
+                                {{project.status}}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-light rounded-circle"><i
+                                    class="bi bi-arrow-right"></i></button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
