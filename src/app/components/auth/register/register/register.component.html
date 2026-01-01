@@ -2,11 +2,25 @@
     <div class="card login-card shadow-lg border-0 rounded-4">
         <div class="card-body p-5">
             <div class="text-center mb-4">
-                <h2 class="fw-bold text-primary mb-2">Welcome Back</h2>
-                <p class="text-muted">Please sign in to continue</p>
+                <h2 class="fw-bold text-primary mb-2">Create Account</h2>
+                <p class="text-muted">Join us today! It takes only few steps</p>
             </div>
 
-            <form [formGroup]="form" (ngSubmit)="login()">
+            <form [formGroup]="form" (ngSubmit)="register()">
+
+                <!-- Full Name Input -->
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="fullNameInput" placeholder="John Doe"
+                        formControlName="fullName"
+                        [class.is-invalid]="form.get('fullName')?.invalid && form.get('fullName')?.touched">
+                    <label for="fullNameInput">Full Name</label>
+                    @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+                    <div class="invalid-feedback">
+                        Full Name is required
+                    </div>
+                    }
+                </div>
+
                 <!-- Email Input -->
                 <div class="form-floating mb-3">
                     <input type="email" class="form-control" id="emailInput" placeholder="name@example.com"
@@ -26,7 +40,7 @@
                 </div>
 
                 <!-- Password Input -->
-                <div class="form-floating mb-4">
+                <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="passwordInput" placeholder="Password"
                         formControlName="password"
                         [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched">
@@ -38,19 +52,34 @@
                     }
                 </div>
 
+                <!-- Role Select -->
+                <div class="form-floating mb-4">
+                    <select class="form-select" id="roleSelect" formControlName="role" aria-label="Select Role">
+                        <option value="Admin">Admin</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Employee">Employee</option>
+                    </select>
+                    <label for="roleSelect">Select Role</label>
+                </div>
+
                 <!-- Submit Button -->
                 <button type="submit"
                     class="btn btn-primary w-100 py-3 fw-bold rounded-3 mb-3 d-flex align-items-center justify-content-center gap-2"
                     [disabled]="form.invalid">
-                    Sign In
-                    <i class="bi bi-arrow-right"></i>
+                    Sign Up
+                    <i class="bi bi-person-plus"></i>
                 </button>
 
-                <!-- Forgot Password / Sign Up Links (Optional placeholders) -->
+                <!-- Terms (Optional) -->
+                <p class="text-center small text-muted mt-3 mb-0">
+                    By registering, you agree to our <a href="#" class="text-decoration-none">Terms</a> and <a href="#"
+                        class="text-decoration-none">Conditions</a>.
+                </p>
+
+                <!-- Login Link -->
                 <div class="text-center mt-3">
-                    <a class="text-decoration-none small text-muted me-2" href="#">Forgot Password?</a>
-                    <span class="text-muted">|</span>
-                    <a class="text-decoration-none small text-primary ms-2 fw-medium" href="#">Create Account</a>
+                    <span class="text-muted small">Already have an account?</span>
+                    <a class="text-decoration-none small text-primary ms-1 fw-medium" href="/login">Sign In</a>
                 </div>
             </form>
         </div>

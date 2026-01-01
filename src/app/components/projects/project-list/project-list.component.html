@@ -1,7 +1,6 @@
 <input matInput placeholder="Search Project" [formControl]="searchControl">
 
-
-<div *ngIf="projects$ | async as res">
+@if (projects$ | async; as res) {
     <table mat-table [dataSource]="res.data">
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -14,4 +13,4 @@
 
     <mat-paginator [length]="res.totalCount" [pageSize]="5" (page)="pageChange($event)">
     </mat-paginator>
-</div>
+}

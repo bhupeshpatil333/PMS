@@ -46,4 +46,8 @@ export class AuthService {
     localStorage.setItem('role', res.role);
   }
 
+  register(data: any): Observable<any> {
+    return this.api.post('auth/register', data);
+  }
+
 }

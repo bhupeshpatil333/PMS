@@ -5,10 +5,11 @@ import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { ProjectService } from '../../../services/project.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-project-list',
-  imports: [SharedMaterialModule, ReactiveFormsModule],
+  imports: [SharedMaterialModule, ReactiveFormsModule, AsyncPipe],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss'
 })

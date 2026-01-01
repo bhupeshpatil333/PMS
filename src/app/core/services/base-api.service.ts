@@ -7,7 +7,7 @@ import { catchError, Observable, retry, throwError } from 'rxjs';
 })
 export class BaseApiService {
 
-  private readonly API_URL = 'https://localhost:5103/api';
+  private readonly API_URL = 'http://localhost:5103/api';
 
   constructor(private http: HttpClient) { }
 

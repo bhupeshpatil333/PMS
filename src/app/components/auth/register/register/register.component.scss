@@ -38,7 +38,7 @@ $bg-gradient-end: #4cc9f0;
 
 .login-card {
     width: 100%;
-    max-width: 450px;
+    max-width: 500px; // Slightly wider for registration if needed
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -61,7 +61,9 @@ $bg-gradient-end: #4cc9f0;
 
 // Custom Input Styling
 .form-floating {
-    >.form-control {
+
+    >.form-control,
+    >.form-select {
         border: 2px solid #e9ecef;
         background-color: #f8f9fa;
         transition: all 0.3s ease;
