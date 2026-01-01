@@ -1,0 +1,46 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, tap, shareReplay, Observable, combineLatest, switchMap } from 'rxjs';
+import { BaseApiService } from '../core/services/base-api.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ProjectService {
+  private page$ = new BehaviorSubject<number>(1);
+  private search$ = new BehaviorSubject<string>('');
+
+  constructor(private api: BaseApiService) {}
+
+  projects$ = combineLatest([this.page$, this.search$]).pipe(
+    switchMap(([page, search]) =>
+      this.api.get<any>('projects/paged', {
+        page,
+        pageSize: 5,
+        search
+      })
+    ),
+    shareReplay(1)
+  );
+
+  setPage(page: number) {
+    this.page$.next(page);
+  }
+
+  setSearch(text: string) {
+    this.search$.next(text);
+  }
+
+  createProject(data: any): Observable<any> {
+    return this.api.post<any>('projects', data)
+      .pipe(
+        tap(() => this.page$.next(1))
+      );
+  }
+
+  softDelete(id: number): Observable<any> {
+    return this.api.delete(`projects/${id}`)
+      .pipe(
+        tap(() => this.page$.next(1))
+      );
+  }
+}
