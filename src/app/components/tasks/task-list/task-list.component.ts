@@ -11,6 +11,7 @@ import { TaskFormComponent } from '../task-form/task-form.component';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ProjectService } from '../../../services/project.service';
 
 @Component({
   selector: 'app-task-list',
@@ -21,20 +22,33 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
 })
 export class TaskListComponent implements OnInit {
   projectId: number | null = null;
+  projectName: string = 'Board'; // Default
   // Local state for drag and drop stability
   todoTasks: any[] = [];
   inProgressTasks: any[] = [];
   doneTasks: any[] = [];
 
-  constructor(private route: ActivatedRoute, private taskService: TaskService, private dialog: MatDialog) { }
+  constructor(
+    private route: ActivatedRoute,
+    private taskService: TaskService,
+    private projectService: ProjectService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
       const id = params.get('projectId');
       if (id) {
         this.projectId = +id;
+        this.loadProjectDetails(this.projectId);
         this.loadTasks(this.projectId);
       }
+    });
+  }
+
+  loadProjectDetails(id: number) {
+    this.projectService.getProject(id).subscribe(project => {
+      this.projectName = project.name;
     });
   }
 
@@ -55,6 +69,7 @@ export class TaskListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result && this.projectId) {
         this.loadTasks(this.projectId);
+        this.projectService.refresh(); // Sync progress
       }
     });
   }
@@ -73,7 +88,10 @@ export class TaskListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.taskService.deleteTask(task.id).subscribe(() => {
-          if (this.projectId) this.loadTasks(this.projectId);
+          if (this.projectId) {
+            this.loadTasks(this.projectId);
+            this.projectService.refresh(); // Sync progress
+          }
         });
       }
     });
@@ -102,6 +120,9 @@ export class TaskListComponent implements OnInit {
 
   updateTaskStatus(id: number, status: string) {
     this.taskService.updateStatus(id, status).subscribe({
+      next: () => {
+        this.projectService.refresh(); // Sync progress
+      },
       error: () => {
         console.error('Failed to update status');
         // Revert could happen here, or simple reload

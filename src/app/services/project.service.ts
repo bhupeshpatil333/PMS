@@ -9,9 +9,11 @@ export class ProjectService {
   private page$ = new BehaviorSubject<number>(1);
   private search$ = new BehaviorSubject<string>('');
 
+  private refresh$ = new BehaviorSubject<void>(undefined);
+
   constructor(private api: BaseApiService) { }
 
-  projects$ = combineLatest([this.page$, this.search$]).pipe(
+  projects$ = combineLatest([this.page$, this.search$, this.refresh$]).pipe(
     switchMap(([page, search]) =>
       this.api.get<any>('projects/paged', {
         page,
@@ -21,6 +23,10 @@ export class ProjectService {
     ),
     shareReplay(1)
   );
+
+  refresh() {
+    this.refresh$.next();
+  }
 
   setPage(page: number) {
     this.page$.next(page);

@@ -8,11 +8,14 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProjectFormComponent } from '../project-form/project-form.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-project-list',
-  imports: [SharedMaterialModule, ReactiveFormsModule, AsyncPipe, RouterLink],
+  imports: [SharedMaterialModule, ReactiveFormsModule, AsyncPipe, RouterLink, MatMenuModule, MatButtonModule, MatIconModule],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss'
 })
@@ -23,6 +26,21 @@ export class ProjectListComponent implements OnInit {
 
   constructor(private projectService: ProjectService, private dialog: MatDialog) {
     this.projects$ = this.projectService.projects$;
+  }
+
+  getProgress(project: any): number {
+    // If backend provides progress directly
+    if (typeof project.progress === 'number') {
+      return project.progress;
+    }
+
+    // If project has tasks array, calculate percentage of 'Done' tasks
+    if (project.tasks && Array.isArray(project.tasks) && project.tasks.length > 0) {
+      const completed = project.tasks.filter((t: any) => t.status === 'Done').length;
+      return Math.round((completed / project.tasks.length) * 100);
+    }
+
+    return 0; // Default to 0 if no data
   }
 
   ngOnInit() {
