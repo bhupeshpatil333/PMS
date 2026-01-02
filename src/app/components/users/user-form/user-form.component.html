@@ -1,0 +1,63 @@
+<div class="modal-content-wrapper">
+    <div class="modal-header border-0 pb-0 pt-4 px-4 d-flex flex-column align-items-start position-relative">
+        <div
+            class="icon-box bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center mb-3">
+            <i class="bi bi-person-plus fs-3"></i>
+        </div>
+        <h4 class="modal-title fw-bold text-dark mb-1">{{ isEditMode ? 'Edit User' : 'New User' }}</h4>
+        <p class="text-muted small">Manage user access and details.</p>
+
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-4" aria-label="Close"
+            (click)="close()"></button>
+    </div>
+
+    <div class="modal-body px-4 pt-2 pb-4">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control bg-light border-0 shadow-none fw-medium" id="fullName"
+                    placeholder="Full Name" formControlName="fullName"
+                    [class.is-invalid]="form.get('fullName')?.invalid && form.get('fullName')?.touched">
+                <label for="fullName" class="text-secondary">Full Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control bg-light border-0 shadow-none fw-medium" id="email"
+                    placeholder="name@example.com" formControlName="email">
+                <label for="email" class="text-secondary">Email address</label>
+            </div>
+
+            @if(!isEditMode) {
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control bg-light border-0 shadow-none fw-medium" id="password"
+                    placeholder="Password" formControlName="password">
+                <label for="password" class="text-secondary">Password</label>
+            </div>
+            }
+
+            <div class="mb-4">
+                <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Role</label>
+                <div class="d-flex gap-2">
+                    @for(role of roles; track role) {
+                    <div class="form-check form-check-inline m-0">
+                        <input class="btn-check" type="radio" [value]="role" formControlName="role" [id]="'role'+role">
+                        <label class="btn btn-outline-light text-dark border-0 bg-light fw-medium px-3 py-2"
+                            [for]="'role'+role">
+                            {{role}}
+                        </label>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end pt-2">
+                <button type="button" class="btn btn-light text-secondary fw-semibold px-4 py-2 rounded-3"
+                    (click)="close()">Cancel</button>
+                <button type="submit" class="btn btn-primary fw-bold px-4 py-2 rounded-3 shadow-sm"
+                    [disabled]="form.invalid">
+                    {{ isEditMode ? 'Update User' : 'Create User' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -73,7 +73,7 @@ export class TaskFormComponent implements OnInit {
     }
 
     getAllUsers() {
-        this.authService.getAllUsers().subscribe({
+        this.authService.getAllEmpUsers().subscribe({
             next: (res) => {
                 this.employees = res;
             },

@@ -59,5 +59,8 @@ export class AuthService {
   getAllUsers(): Observable<User[]> {
     return this.api.get<User[]>('users');
   }
+  getAllEmpUsers(): Observable<User[]> {
+    return this.api.get<User[]>('users/employees');
+  }
 
 }

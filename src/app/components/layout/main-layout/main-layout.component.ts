@@ -7,11 +7,12 @@ import { Observable } from 'rxjs';
 import { User } from '../../../models/user.interface';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
+import { HasRoleDirective } from '../../../core/directives/has-role.directive';
 
 @Component({
     selector: 'app-main-layout',
     standalone: true,
-    imports: [RouterOutlet, RouterLink, RouterLinkActive, AsyncPipe, MatMenuModule, MatButtonModule],
+    imports: [RouterOutlet, RouterLink, RouterLinkActive, AsyncPipe, MatMenuModule, MatButtonModule, HasRoleDirective],
     templateUrl: './main-layout.component.html',
     styleUrl: './main-layout.component.scss'
 })

@@ -4,21 +4,23 @@ import { TaskService } from '../../../services/task.service';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { map, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 import { TaskFormComponent } from '../task-form/task-form.component';
+import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-task-list',
-  imports: [AsyncPipe, DatePipe],
+  imports: [AsyncPipe, DatePipe, DragDropModule, MatMenuModule, MatButtonModule],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
 export class TaskListComponent implements OnInit {
   projectId: number | null = null;
-  tasks$!: Observable<any[]>;
-
-  todoTasks$!: Observable<any[]>;
-  inProgressTasks$!: Observable<any[]>;
-  doneTasks$!: Observable<any[]>;
+  // Local state for drag and drop stability
+  todoTasks: any[] = [];
+  inProgressTasks: any[] = [];
+  doneTasks: any[] = [];
 
   constructor(private route: ActivatedRoute, private taskService: TaskService, private dialog: MatDialog) { }
 
@@ -33,12 +35,11 @@ export class TaskListComponent implements OnInit {
   }
 
   loadTasks(id: number) {
-    this.tasks$ = this.taskService.getTasksByProject(id);
-
-    // Naive filtering for demo purposes (ideally backend filters or single stream with map)
-    this.todoTasks$ = this.tasks$.pipe(map(tasks => tasks.filter(t => t.status === 'Wiki' || t.status === 'To Do' || !t.status)));
-    this.inProgressTasks$ = this.tasks$.pipe(map(tasks => tasks.filter(t => t.status === 'In Progress')));
-    this.doneTasks$ = this.tasks$.pipe(map(tasks => tasks.filter(t => t.status === 'Done')));
+    this.taskService.getTasksByProject(id).subscribe(tasks => {
+      this.todoTasks = tasks.filter(t => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
+      this.inProgressTasks = tasks.filter(t => t.status === 'In Progress');
+      this.doneTasks = tasks.filter(t => t.status === 'Done');
+    });
   }
 
   openTaskForm(task?: any) {
@@ -55,10 +56,41 @@ export class TaskListComponent implements OnInit {
   }
 
   deleteTask(task: any) {
-    if (confirm(`Are you sure you want to delete ${task.name}?`)) {
+    if (confirm(`Are you sure you want to delete ${task.title}?`)) {
       this.taskService.deleteTask(task.id).subscribe(() => {
         if (this.projectId) this.loadTasks(this.projectId);
       });
     }
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+
+      const task = event.container.data[event.currentIndex];
+      const newStatus = event.container.id;
+
+      // Update local object status immediate to reflect change if redrawn
+      task.status = newStatus;
+
+      this.updateTaskStatus(task.id, newStatus);
+    }
+  }
+
+  updateTaskStatus(id: number, status: string) {
+    this.taskService.updateStatus(id, status).subscribe({
+      error: () => {
+        console.error('Failed to update status');
+        // Revert could happen here, or simple reload
+        if (this.projectId) this.loadTasks(this.projectId);
+      }
+    });
   }
 }

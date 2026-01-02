@@ -14,7 +14,7 @@ export class TaskService {
   }
 
   updateStatus(id: number, status: string): Observable<any> {
-    return this.api.put(`tasks/${id}/status?status=${status}`);
+    return this.api.put(`tasks/${id}/status?status=${status}`, { status });
   }
 
   createTask(data: any): Observable<any> {

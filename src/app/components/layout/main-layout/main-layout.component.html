@@ -9,9 +9,13 @@
                 class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
                 <i class="bi bi-speedometer2 me-2"></i>Dashboard
             </a>
-            <a routerLink="/projects" routerLinkActive="active"
+            <a *appHasRole="['Admin', 'Manager']" routerLink="/projects" routerLinkActive="active"
                 class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
                 <i class="bi bi-folder me-2"></i>Projects
+            </a>
+            <a *appHasRole="['Admin']" routerLink="/users" routerLinkActive="active"
+                class="list-group-item list-group-item-action bg-transparent second-text fw-bold">
+                <i class="bi bi-people me-2"></i>Users
             </a>
         </div>
     </div>

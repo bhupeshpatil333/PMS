@@ -4,15 +4,6 @@
         <p class="text-muted small mb-0">Project Tasks</p>
     </div>
     <div class="d-flex gap-2">
-        <div class="d-flex -users-avatar me-3">
-            <div
-                class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center border border-white">
-                JD</div>
-            <div class="avatar bg-success text-white rounded-circle d-flex align-items-center justify-content-center border border-white"
-                style="margin-left: -10px">AB</div>
-            <div class="avatar bg-light text-secondary rounded-circle d-flex align-items-center justify-content-center border border-white small"
-                style="margin-left: -10px">+3</div>
-        </div>
         <button class="btn btn-primary d-flex align-items-center gap-2 rounded-3 shadow-sm" (click)="openTaskForm()">
             <i class="bi bi-plus-lg"></i>
             <span>Add Task</span>
@@ -20,54 +11,39 @@
     </div>
 </div>
 
-<div class="row g-4 kanban-board">
+<div class="row g-4 kanban-board" cdkDropListGroup>
     <!-- To Do Column -->
     <div class="col-md-4">
         <div class="kanban-column bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3 px-2">
-                <h6 class="fw-bold text-secondary mb-0 text-uppercase small ls-1">To Do <span
-                        class="badge bg-white text-secondary shadow-sm rounded-pill ms-2">3</span></h6>
+                <h6 class="fw-bold text-secondary mb-0 text-uppercase small ls-1">To Do</h6>
                 <button class="btn btn-sm btn-light rounded-circle" (click)="openTaskForm()"><i
                         class="bi bi-plus"></i></button>
             </div>
 
-            <div class="d-flex flex-column gap-3">
-                <!-- Example Card -->
-                <div class="card border-0 shadow-sm rounded-3 task-card">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-1 small">High</span>
-                            <button class="btn btn-link text-muted p-0 no-arrow"><i
-                                    class="bi bi-three-dots"></i></button>
-                        </div>
-                        <h6 class="card-title fw-bold mb-2">Design Login Page</h6>
-                        <p class="card-text text-muted small mb-3">Create high fidelity mockups for the new auth flow.
-                        </p>
-                        <div class="d-flex justify-content-between align-items-center border-top pt-3">
-                            <div
-                                class="avatar-small bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
-                                JD</div>
-                            <div class="text-muted small"><i class="bi bi-paperclip me-1"></i>2</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="d-flex flex-column gap-3 min-h-list" cdkDropList id="To Do" [cdkDropListData]="todoTasks"
+                (cdkDropListDropped)="drop($event)">
 
-                <!-- More cards would be iterated here -->
-                @for (task of todoTasks$ | async; track task.id) {
-                <div class="card border-0 shadow-sm rounded-3 task-card">
+                @for (task of todoTasks; track task.id) {
+                <div class="card border-0 shadow-sm rounded-3 task-card cursor-grab" cdkDrag>
                     <div class="card-body p-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span
                                 class="badge bg-primary-subtle text-primary rounded-pill px-2 py-1 small">{{task.priority}}</span>
-                            <button class="btn btn-link text-muted p-0 no-arrow"><i
+                            <button class="btn btn-link text-muted p-0 no-arrow" [matMenuTriggerFor]="menu"><i
                                     class="bi bi-three-dots"></i></button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="openTaskForm(task)">Edit</button>
+                                <button mat-menu-item (click)="deleteTask(task)">Delete</button>
+                            </mat-menu>
                         </div>
-                        <h6 class="card-title fw-bold mb-2">{{task.name}}</h6>
+                        <h6 class="card-title fw-bold mb-2">{{task.title}}</h6>
                         <p class="card-text text-muted small mb-3">{{task.description}}</p>
                         <div class="d-flex justify-content-between align-items-center border-top pt-3">
                             <div
                                 class="avatar-small bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center">
-                                U</div>
+                                U
+                            </div>
                             <small class="text-muted">{{task.dueDate | date:'mediumDate'}}</small>
                         </div>
                     </div>
@@ -81,20 +57,26 @@
     <div class="col-md-4">
         <div class="kanban-column bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3 px-2">
-                <h6 class="fw-bold text-secondary mb-0 text-uppercase small ls-1">In Progress <span
-                        class="badge bg-white text-secondary shadow-sm rounded-pill ms-2">2</span></h6>
-                <button class="btn btn-sm btn-light rounded-circle"><i class="bi bi-plus"></i></button>
+                <h6 class="fw-bold text-secondary mb-0 text-uppercase small ls-1">In Progress</h6>
             </div>
 
-            <div class="d-flex flex-column gap-3">
-                @for (task of inProgressTasks$ | async; track task.id) {
-                <div class="card border-0 shadow-sm rounded-3 task-card">
+            <div class="d-flex flex-column gap-3 min-h-list" cdkDropList id="In Progress"
+                [cdkDropListData]="inProgressTasks" (cdkDropListDropped)="drop($event)">
+
+                @for (task of inProgressTasks; track task.id) {
+                <div class="card border-0 shadow-sm rounded-3 task-card cursor-grab" cdkDrag>
                     <div class="card-body p-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span
                                 class="badge bg-warning-subtle text-warning rounded-pill px-2 py-1 small">{{task.priority}}</span>
+                            <button class="btn btn-link text-muted p-0 no-arrow" [matMenuTriggerFor]="menu"><i
+                                    class="bi bi-three-dots"></i></button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="openTaskForm(task)">Edit</button>
+                                <button mat-menu-item (click)="deleteTask(task)">Delete</button>
+                            </mat-menu>
                         </div>
-                        <h6 class="card-title fw-bold mb-2">{{task.name}}</h6>
+                        <h6 class="card-title fw-bold mb-2">{{task.title}}</h6> <!-- Fixed: task.name to task.title -->
                         <p class="card-text text-muted small mb-3">{{task.description}}</p>
                     </div>
                 </div>
@@ -107,21 +89,29 @@
     <div class="col-md-4">
         <div class="kanban-column bg-light rounded-4 p-3 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3 px-2">
-                <h6 class="fw-bold text-secondary mb-0 text-uppercase small ls-1">Done <span
-                        class="badge bg-white text-secondary shadow-sm rounded-pill ms-2">5</span></h6>
+                <h6 class="fw-bold text-secondary mb-0 text-uppercase small ls-1">Done</h6>
             </div>
 
-            <div class="d-flex flex-column gap-3">
-                <div class="card border-0 shadow-sm rounded-3 task-card task-done opacity-75">
+            <div class="d-flex flex-column gap-3 min-h-list" cdkDropList id="Done" [cdkDropListData]="doneTasks"
+                (cdkDropListDropped)="drop($event)">
+
+                @for (task of doneTasks; track task.id) {
+                <div class="card border-0 shadow-sm rounded-3 task-card task-done opacity-75 cursor-grab" cdkDrag>
                     <div class="card-body p-3">
-                        <h6 class="card-title fw-bold mb-2 text-decoration-line-through text-muted">Setup Project Repo
-                        </h6>
-                        <div class="d-flex justify-content-end align-items-center border-top pt-2 mt-2">
+                        <h6 class="card-title fw-bold mb-2 text-decoration-line-through text-muted">{{task.title}}</h6>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
                             <span class="badge bg-success-subtle text-success rounded-pill"><i
                                     class="bi bi-check-lg me-1"></i>Done</span>
+                            <button class="btn btn-link text-muted p-0 no-arrow" [matMenuTriggerFor]="menu"><i
+                                    class="bi bi-three-dots"></i></button>
+                            <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="openTaskForm(task)">Edit</button>
+                                <button mat-menu-item (click)="deleteTask(task)">Delete</button>
+                            </mat-menu>
                         </div>
                     </div>
                 </div>
+                }
             </div>
         </div>
     </div>
