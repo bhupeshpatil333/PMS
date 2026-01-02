@@ -12,11 +12,12 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from 
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ProjectService } from '../../../services/project.service';
+import { HasRoleDirective } from '../../../core/directives/has-role.directive';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [AsyncPipe, DatePipe, DragDropModule, MatMenuModule, MatButtonModule, MatIconModule],
+  imports: [AsyncPipe, DatePipe, DragDropModule, MatMenuModule, MatButtonModule, MatIconModule, HasRoleDirective],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })

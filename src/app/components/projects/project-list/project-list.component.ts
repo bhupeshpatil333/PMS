@@ -16,10 +16,11 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { HasRoleDirective } from '../../../core/directives/has-role.directive';
 
 @Component({
   selector: 'app-project-list',
-  imports: [SharedMaterialModule, ReactiveFormsModule, AsyncPipe, RouterLink, MatMenuModule, MatButtonModule, MatIconModule],
+  imports: [SharedMaterialModule, ReactiveFormsModule, AsyncPipe, RouterLink, MatMenuModule, MatButtonModule, MatIconModule, HasRoleDirective],
   templateUrl: './project-list.component.html',
   styleUrl: './project-list.component.scss'
 })
@@ -39,7 +40,7 @@ export class ProjectListComponent implements OnInit {
       this.authService.user$
     ]).pipe(
       switchMap(([res, user]) => {
-        if (!user || user.role === 'Admin' || user.role === 'Manager') {
+        if (!user || user.role === 'Admin') {
           return this.projectService.projects$;
         } else {
           return combineLatest([this.projectService.page$, this.projectService.search$]).pipe(
