@@ -35,11 +35,8 @@ export class ProjectListComponent implements OnInit {
     private authService: AuthService,
     private taskService: TaskService
   ) {
-    this.projects$ = combineLatest([
-      this.projectService.projects$,
-      this.authService.user$
-    ]).pipe(
-      switchMap(([res, user]) => {
+    this.projects$ = this.authService.user$.pipe(
+      switchMap(user => {
         if (!user || user.role === 'Admin') {
           return this.projectService.projects$;
         } else {

@@ -73,12 +73,25 @@ export class ProjectService {
       page,
       pageSize: 5,
       search
-    });
+    }).pipe(
+      map(response => {
+        if (Array.isArray(response)) {
+          return {
+            data: response,
+            totalCount: response.length
+          };
+        }
+        return response;
+      })
+    );
   }
 
   getMyAllProjects(): Observable<any[]> {
     return this.api.get<any>('projects/assigned-to-me').pipe(
-      map((res: any) => res.data || res.items || [])
+      map((res: any) => {
+        if (Array.isArray(res)) return res;
+        return res.data || res.items || [];
+      })
     );
   }
 }
