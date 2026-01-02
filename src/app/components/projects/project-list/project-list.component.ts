@@ -37,13 +37,37 @@ export class ProjectListComponent implements OnInit {
   ) {
     this.projects$ = this.authService.user$.pipe(
       switchMap(user => {
+        let projectsO$;
         if (!user || user.role === 'Admin') {
-          return this.projectService.projects$;
+          projectsO$ = this.projectService.projects$;
         } else {
-          return combineLatest([this.projectService.page$, this.projectService.search$]).pipe(
+          projectsO$ = combineLatest([this.projectService.page$, this.projectService.search$]).pipe(
             switchMap(([page, search]) => this.projectService.getMyProjects(page, search))
           );
         }
+
+        return projectsO$.pipe(
+          switchMap((res: any) => {
+            const projects = res.data || [];
+            if (!projects.length) return of(res);
+
+            // Fetch tasks for each project to calculate progress
+            const tasksRequests = projects.map((p: any) =>
+              this.taskService.getTasksByProject(p.id).pipe(
+                catchError(() => of([]))
+              )
+            );
+
+            return forkJoin(tasksRequests).pipe(
+              map((tasksLists: any) => {
+                tasksLists.forEach((tasks: any, index: number) => {
+                  projects[index].tasks = tasks;
+                });
+                return res;
+              })
+            );
+          })
+        );
       })
     );
   }
@@ -61,6 +85,14 @@ export class ProjectListComponent implements OnInit {
     }
 
     return 0; // Default to 0 if no data
+  }
+
+  getCompletedTaskCount(project: any): string {
+    if (project.tasks && Array.isArray(project.tasks) && project.tasks.length > 0) {
+      const completed = project.tasks.filter((t: any) => t.status === 'Done').length;
+      return `${completed}/${project.tasks.length}`;
+    }
+    return '0/0';
   }
 
   ngOnInit() {
