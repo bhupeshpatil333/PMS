@@ -1,0 +1,67 @@
+.dialog-container {
+    background: white;
+    border-radius: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.delete {
+        background-color: #FEE2E2; // Red-100
+        color: #DC2626; // Red-600
+    }
+
+    &.discard {
+        background-color: #FEE2E2; // Same soft red as Delete for consistency with user image
+        color: #DC2626;
+    }
+
+    mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.dialog-title {
+    font-size: 1.5rem;
+    color: #111827;
+}
+
+.dialog-message {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.btn-cancel {
+    background-color: #F3F4F6 !important;
+    color: #6B7280 !important;
+    border-radius: 8px !important;
+    padding: 0 1.5rem !important;
+    height: 44px !important;
+    font-weight: 500 !important;
+
+    &:hover {
+        background-color: #E5E7EB !important;
+    }
+}
+
+.btn-confirm {
+    background-color: #DC2626 !important; // Red-600
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 0 1.5rem !important;
+    height: 44px !important;
+    font-weight: 500 !important;
+
+    &:hover {
+        background-color: #B91C1C !important; // Red-700
+    }
+}

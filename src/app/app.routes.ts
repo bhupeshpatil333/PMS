@@ -8,6 +8,7 @@ import { roleGuard } from './core/guards/role.guard';
 import { RegisterComponent } from './components/auth/register/register/register.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { UserListComponent } from './components/users/user-list/user-list.component';
+import { unsavedChangesGuard } from './core/guards/unsaved-changes.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,13 +25,15 @@ export const routes: Routes = [
                 path: 'projects',
                 component: ProjectListComponent,
                 canActivate: [roleGuard],
+                canDeactivate: [unsavedChangesGuard],
                 data: { roles: ['Admin', 'Manager'] }
             },
-            { path: 'tasks/:projectId', component: TaskListComponent },
+            { path: 'tasks/:projectId', component: TaskListComponent, canDeactivate: [unsavedChangesGuard] },
             {
                 path: 'users',
                 component: UserListComponent,
                 canActivate: [roleGuard],
+                canDeactivate: [unsavedChangesGuard],
                 data: { roles: ['Admin'] }
             }
         ]

@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TaskService } from '../../../services/task.service';
@@ -8,10 +9,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { TaskFormComponent } from '../task-form/task-form.component';
 import { CdkDragDrop, moveItemInArray, transferArrayItem, DragDropModule } from '@angular/cdk/drag-drop';
+import { MatIconModule } from '@angular/material/icon';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-task-list',
-  imports: [AsyncPipe, DatePipe, DragDropModule, MatMenuModule, MatButtonModule],
+  standalone: true,
+  imports: [AsyncPipe, DatePipe, DragDropModule, MatMenuModule, MatButtonModule, MatIconModule],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
@@ -56,11 +60,23 @@ export class TaskListComponent implements OnInit {
   }
 
   deleteTask(task: any) {
-    if (confirm(`Are you sure you want to delete ${task.title}?`)) {
-      this.taskService.deleteTask(task.id).subscribe(() => {
-        if (this.projectId) this.loadTasks(this.projectId);
-      });
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Confirm Delete?',
+        message: 'Are you sure you want to delete this task?',
+        confirmText: 'Yes, Delete',
+        cancelText: 'Cancel',
+        type: 'delete'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.taskService.deleteTask(task.id).subscribe(() => {
+          if (this.projectId) this.loadTasks(this.projectId);
+        });
+      }
+    });
   }
 
   drop(event: CdkDragDrop<any[]>) {

@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProjectFormComponent } from '../project-form/project-form.component';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-project-list',
@@ -45,8 +46,25 @@ export class ProjectListComponent implements OnInit {
   }
 
   deleteProject(project: any) {
-    if (confirm(`Are you sure you want to delete ${project.name}?`)) {
-      this.projectService.softDelete(project.id).subscribe();
-    }
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Delete Project?',
+        message: `Are you sure you want to delete "${project.name}"?`,
+        confirmText: 'Delete',
+        cancelText: 'Cancel',
+        type: 'delete'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.projectService.softDelete(project.id).subscribe(() => {
+          // Refresh list or rely on observable to update if implemented in service
+          // Here we might need to manually trigger refresh or ensure observable emits
+          // For now assuming subscriptions handle it or we force reload
+          window.location.reload(); // Simple refresh to ensure state, better to use observable refresh
+        });
+      }
+    });
   }
 }

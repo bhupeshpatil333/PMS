@@ -41,6 +41,36 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control bg-light border-0 shadow-none fw-medium" id="startDate"
+                            placeholder="Start Date" formControlName="startDate"
+                            [class.is-invalid]="form.get('startDate')?.invalid && form.get('startDate')?.touched">
+                        <label for="startDate" class="text-secondary">Start Date</label>
+                        @if(form.get('startDate')?.invalid && form.get('startDate')?.touched) {
+                        <div class="invalid-feedback ps-2">
+                            Start Date is required
+                        </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control bg-light border-0 shadow-none fw-medium" id="endDate"
+                            placeholder="End Date" formControlName="endDate"
+                            [class.is-invalid]="form.get('endDate')?.invalid && form.get('endDate')?.touched || form.hasError('dateRange')">
+                        <label for="endDate" class="text-secondary">End Date</label>
+
+                        @if(form.hasError('dateRange') && form.get('endDate')?.touched) {
+                        <div class="invalid-feedback ps-2 d-block">
+                            <i class="bi bi-calendar-x me-1"></i> Precedes Start Date
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
             <div class="form-floating mb-4">
                 <textarea class="form-control bg-light border-0 shadow-none fw-medium"
                     placeholder="Leave a description here" id="projectDesc" style="height: 120px"

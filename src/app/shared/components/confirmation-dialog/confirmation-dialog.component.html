@@ -1,0 +1,20 @@
+<div class="dialog-container text-center p-4">
+    <!-- Icon Circle -->
+    <div class="icon-circle mb-3 mx-auto" [ngClass]="data.type">
+        <mat-icon *ngIf="data.type === 'delete'">delete</mat-icon>
+        <mat-icon *ngIf="data.type === 'discard'">edit</mat-icon>
+    </div>
+
+    <!-- Title -->
+    <h2 class="dialog-title fw-bold mb-2">{{ data.title }}</h2>
+
+    <!-- Message -->
+    <p class="dialog-message text-muted mb-4">{{ data.message }}</p>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-center gap-3">
+        <button mat-button class="btn-cancel" (click)="onCancel()">{{ data.cancelText }}</button>
+        <button mat-flat-button class="btn-confirm" [color]="data.type === 'delete' ? 'warn' : 'warn'"
+            (click)="onConfirm()">{{ data.confirmText }}</button>
+    </div>
+</div>

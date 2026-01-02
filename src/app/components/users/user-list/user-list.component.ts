@@ -6,11 +6,11 @@ import { UserService } from '../../../services/user.service';
 import { User } from '../../../models/user.interface';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { UserFormComponent } from '../user-form/user-form.component';
-import { AsyncPipe } from '@angular/common';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
     selector: 'app-user-list',
-    imports: [SharedMaterialModule, AsyncPipe],
+    imports: [SharedMaterialModule],
     templateUrl: './user-list.component.html',
     styleUrl: './user-list.component.scss'
 })
@@ -47,10 +47,22 @@ export class UserListComponent implements OnInit {
     }
 
     deleteUser(user: User) {
-        if (confirm(`Are you sure you want to deactivate ${user.fullName}?`)) {
-            this.userService.deleteUser(user.id).subscribe(() => {
-                this.loadUsers();
-            });
-        }
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            data: {
+                title: 'Deactivate User?',
+                message: `Are you sure you want to deactivate ${user.fullName}?`,
+                confirmText: 'Yes, Deactivate',
+                cancelText: 'Cancel',
+                type: 'delete'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.userService.deleteUser(user.id).subscribe(() => {
+                    this.loadUsers();
+                });
+            }
+        });
     }
 }

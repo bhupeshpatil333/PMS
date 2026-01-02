@@ -1,84 +1,203 @@
-$primary-color: #4361ee;
-$secondary-color: #3f37c9;
-$text-secondary: #6c757d;
-$bg-color: #f8f9fa;
+// Sidebar Variables
+$sidebar-width: 280px;
+$sidebar-collapsed-width: 80px;
 
 :host {
     display: block;
     height: 100vh;
     overflow: hidden;
+    font-family: 'Inter', sans-serif;
 }
 
 #wrapper {
     overflow-x: hidden;
-    background-color: $bg-color;
+    background-color: #F3F4F6; // Light Gray bg
     height: 100vh;
 }
 
 #sidebar-wrapper {
     min-height: 100vh;
-    margin-left: -15rem;
-    transition: margin 0.25s ease-out;
-    width: 15rem;
+    width: $sidebar-width;
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+    z-index: 1000;
+    box-shadow: 1px 0 10px rgba(0, 0, 0, 0.05);
 
-    .sidebar-heading {
-        color: $primary-color;
+    .logo-box {
+        transition: all 0.3s;
     }
 
     .list-group-item {
-        border: none;
-        padding: 20px 30px;
-        color: $text-secondary;
-        transition: all 0.3s;
+        color: #6B7280; // Gray 500
+        transition: all 0.2s;
 
         &:hover {
-            background-color: rgba($primary-color, 0.05) !important;
-            color: $primary-color;
+            color: var(--primary-color);
+            background-color: rgba(var(--primary-rgb), 0.05);
+            transform: translateX(4px);
         }
 
         &.active {
-            background-color: transparent;
-            color: $primary-color;
-            border-right: 4px solid $primary-color;
+            color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.08) !important;
+            font-weight: 600;
+
+            i {
+                color: var(--primary-color);
+            }
         }
     }
 }
 
+// Collapsed State (Controlled by parent class 'toggled')
 #wrapper.toggled #sidebar-wrapper {
-    margin-left: 0;
+    width: $sidebar-collapsed-width;
+
+    .logo-text,
+    .nav-text,
+    .profile-details {
+        display: none !important;
+    }
+
+    .list-group-item {
+        justify-content: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        .icon-wrapper {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        i {
+            font-size: 1.25rem; // Ensure visible size
+        }
+
+        &:hover {
+            transform: none;
+        }
+    }
+
+    .logo-box {
+        width: 40px !important;
+        height: 40px !important;
+
+        i {
+            font-size: 1.2rem !important;
+        }
+    }
+
+    .sidebar-footer {
+        padding: 1rem !important;
+        justify-content: center;
+
+        .d-flex {
+            justify-content: center;
+        }
+
+        .avatar-box {
+            margin: 0 !important;
+        }
+
+        .btn-sm,
+        .profile-details {
+            display: none !important;
+        }
+    }
 }
 
+// Page Content
 #page-content-wrapper {
-    min-width: 100vw;
     width: 100%;
     overflow-y: auto;
     height: 100vh;
+    transition: all 0.3s ease-in-out;
 }
 
-#wrapper.toggled #page-content-wrapper {
-    min-width: 0;
-    width: 100%;
-}
-
-.primary-text {
-    color: $primary-color;
-}
-
-.second-text {
-    color: $secondary-color;
-}
-
-@media (min-width: 768px) {
+// Mobile specific
+@media (max-width: 768px) {
     #sidebar-wrapper {
-        margin-left: 0;
-    }
-
-    #page-content-wrapper {
-        min-width: 0;
-        width: 100%;
+        margin-left: -$sidebar-width;
     }
 
     #wrapper.toggled #sidebar-wrapper {
-        margin-left: -15rem;
+        margin-left: 0;
+        width: $sidebar-width; // On mobile, toggle shows full sidebar
+    }
+
+    .toggle-btn {
+        display: none !important; // Hide floating toggle on mobile, use navbar toggle
+    }
+}
+
+// Toggle Button Style
+.toggle-btn {
+    background: white;
+    color: #4B5563;
+    border-color: #E5E7EB;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+        background-color: #F9FAFB;
+        color: var(--primary-color);
+    }
+}
+
+.tracking-tight {
+    letter-spacing: -0.025em;
+}
+
+// Explicit Profile Button Styling to fix alignment issues
+.sidebar-footer {
+    .profile-btn {
+        display: flex !important;
+        align-items: center !important;
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #F3F4F6;
+        }
+
+        /* Avatar Container */
+        .avatar-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            /* Ensure avatar stays left */
+            margin-right: 0.75rem;
+        }
+
+        /* Text Container */
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1.2;
+            flex-grow: 1;
+            /* Take up available space */
+            overflow: hidden;
+
+            span {
+                display: block;
+                /* Force block to prevent side-by-side */
+            }
+        }
+
+        /* Menu Icon */
+        mat-icon {
+            margin-left: auto;
+            /* Push to far right */
+            flex-shrink: 0;
+        }
     }
 }

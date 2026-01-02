@@ -1,10 +1,19 @@
+import { normalizePassiveListenerOptions } from '@angular/cdk/platform';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { TaskService } from '../../../services/task.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { User } from '../../../models/user.interface';
 import { AuthService } from '../../../services/auth.service';
+
+/** Custom validator to ensure Due Date is after Start Date */
+const dateRangeValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+    const start = group.get('startDate')?.value;
+    const end = group.get('dueDate')?.value;
+    return start && end && new Date(start) > new Date(end) ? { dateRange: true } : null;
+};
 
 @Component({
     selector: 'app-task-form',
@@ -24,18 +33,19 @@ export class TaskFormComponent implements OnInit {
         private taskService: TaskService,
         private authService: AuthService,
         private dialogRef: MatDialogRef<TaskFormComponent>,
+        private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.form = this.fb.group({
-            title: ['', Validators.required],
+            title: ['', [Validators.required, Validators.minLength(3)]],
             description: [''],
             priority: ['Medium', Validators.required],
             status: ['To Do', Validators.required],
-            startDate: [new Date(), Validators.required],
-            dueDate: [new Date(), Validators.required],
+            startDate: [null], // Optional initially, but validated if present
+            dueDate: [null, Validators.required],
             projectId: [this.data.projectId],
             assignedTo: [null, Validators.required]
-        });
+        }, { validators: dateRangeValidator });
     }
 
     ngOnInit(): void {
@@ -97,7 +107,25 @@ export class TaskFormComponent implements OnInit {
     }
 
     close() {
-        this.dialogRef.close();
+        if (this.form.dirty) {
+            const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+                data: {
+                    title: 'Discard Changes',
+                    message: 'You have unsaved changes. Do you want to leave this page?',
+                    confirmText: 'Leave',
+                    cancelText: 'Stay',
+                    type: 'discard'
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    this.dialogRef.close();
+                }
+            });
+        } else {
+            this.dialogRef.close();
+        }
     }
 
     getAllUsers() {

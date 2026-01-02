@@ -59,8 +59,14 @@
                     </div>
                     <div class="form-floating">
                         <input type="date" class="form-control bg-light border-0 shadow-none fw-medium" id="dueDate"
-                            placeholder="Due Date" formControlName="dueDate">
+                            placeholder="Due Date" formControlName="dueDate"
+                            [class.is-invalid]="form.get('dueDate')?.invalid && form.get('dueDate')?.touched || form.hasError('dateRange')">
                         <label for="dueDate" class="text-secondary">Due Date</label>
+                        @if(form.hasError('dateRange') && form.get('dueDate')?.touched) {
+                        <div class="invalid-feedback ps-2 d-block">
+                            <i class="bi bi-calendar-x me-1"></i> Due Date must be after Start Date
+                        </div>
+                        }
                     </div>
                 </div>
                 <div class="col-md-6">

@@ -6,7 +6,7 @@
         </div>
         <button mat-flat-button color="primary" (click)="openUserForm()">
             <mat-icon>add</mat-icon>
-            Add Consumer
+            Add User
         </button>
     </div>
 
@@ -39,10 +39,9 @@
                 <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary"> Role </th>
                 <td mat-cell *matCellDef="let user">
                     <span class="badge rounded-pill fw-normal px-3 py-2"
-                        [class.bg-danger-subtle]="user.role === 'Admin'" [class.text-danger]="user.role === 'Admin'"
-                        [class.bg-warning-subtle]="user.role === 'Manager'"
-                        [class.text-warning]="user.role === 'Manager'" [class.bg-info-subtle]="user.role === 'Employee'"
-                        [class.text-info]="user.role === 'Employee'">
+                        [class.badge-soft-danger]="user.role === 'Admin'"
+                        [class.badge-soft-warning]="user.role === 'Manager'"
+                        [class.badge-soft-info]="user.role === 'Employee'">
                         {{user.role}}
                     </span>
                 </td>

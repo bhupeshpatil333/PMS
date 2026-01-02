@@ -1,8 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProjectService } from '../../../services/project.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
+
+const dateRangeValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
+    const start = group.get('startDate')?.value;
+    const end = group.get('endDate')?.value;
+    return start && end && new Date(start) > new Date(end) ? { dateRange: true } : null;
+};
 
 @Component({
     selector: 'app-project-form',
@@ -22,10 +28,12 @@ export class ProjectFormComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.form = this.fb.group({
-            name: ['', Validators.required],
+            name: ['', [Validators.required, Validators.minLength(3)]],
             description: [''],
-            status: ['Pending']
-        });
+            status: ['Pending', Validators.required],
+            startDate: [null, Validators.required],
+            endDate: [null, Validators.required]
+        }, { validators: dateRangeValidator });
     }
 
     ngOnInit(): void {
