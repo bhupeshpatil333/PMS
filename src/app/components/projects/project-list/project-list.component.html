@@ -43,7 +43,7 @@
                                 <mat-icon class="text-primary small-icon">edit</mat-icon>
                                 <span>Edit</span>
                             </button>
-                            <button mat-menu-item (click)="deleteProject(project)">
+                            <button mat-menu-item (click)="deleteProject(project)" *appHasRole="['Admin', 'Manager']">
                                 <mat-icon class="text-danger small-icon">delete</mat-icon>
                                 <span class="text-danger">Delete</span>
                             </button>

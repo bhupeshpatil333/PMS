@@ -45,8 +45,12 @@ export class ProjectFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.authService.getAllManagers().subscribe(users => {
-            this.users = users;
+        this.authService.user$.pipe(take(1)).subscribe(user => {
+            if (user && user.role === 'Admin') {
+                this.authService.getAllManagers().subscribe(users => {
+                    this.users = users;
+                });
+            }
         });
 
         if (this.data && this.data.id) {
@@ -86,6 +90,10 @@ export class ProjectFormComponent implements OnInit {
                 error: (err) => console.error(err)
             });
         }
+    }
+
+    getInitials(name: string): string {
+        return name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '';
     }
 
     close() {

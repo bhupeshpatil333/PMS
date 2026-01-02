@@ -45,3 +45,72 @@
         opacity: 0.8;
     }
 }
+
+// Custom Mat Select Styling to match inputs
+::ng-deep .custom-mat-field {
+    .mat-mdc-text-field-wrapper {
+        background-color: var(--bs-light) !important;
+        border-radius: 12px !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+
+    .mat-mdc-form-field-flex {
+        height: 58px !important;
+        align-items: center !important;
+    }
+
+    .mat-mdc-notched-outline {
+        display: none !important;
+    }
+
+    .mat-mdc-form-field-focus-overlay {
+        background-color: transparent !important;
+    }
+
+    &.mat-focused .mat-mdc-text-field-wrapper {
+        background-color: #fff !important;
+        box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1) !important;
+        border: 1px solid rgba(67, 97, 238, 0.3) !important;
+    }
+}
+
+.user-avatar-small {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+}
+
+::ng-deep .custom-select-panel {
+    background-color: #fff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    margin-top: 5px;
+    padding: 5px !important;
+
+    .mat-mdc-option {
+        border-radius: 8px !important;
+        margin-bottom: 2px !important;
+        transition: all 0.2s !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+
+        &:hover,
+        &.mat-mdc-option-active {
+            background-color: rgba(67, 97, 238, 0.05) !important;
+        }
+
+        &.mat-mdc-option-selected {
+            background-color: rgba(67, 97, 238, 0.1) !important;
+        }
+    }
+}

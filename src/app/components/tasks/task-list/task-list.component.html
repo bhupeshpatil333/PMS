@@ -42,7 +42,7 @@
                                     <mat-icon>edit</mat-icon>
                                     <span>Edit</span>
                                 </button>
-                                <button mat-menu-item (click)="deleteTask(task)">
+                                <button mat-menu-item (click)="deleteTask(task)" *appHasRole="['Admin', 'Manager']">
                                     <mat-icon color="warn">delete</mat-icon>
                                     <span>Delete</span>
                                 </button>
@@ -101,7 +101,7 @@
                                     <mat-icon>edit</mat-icon>
                                     <span>Edit</span>
                                 </button>
-                                <button mat-menu-item (click)="deleteTask(task)">
+                                <button mat-menu-item (click)="deleteTask(task)" *appHasRole="['Admin', 'Manager']">
                                     <mat-icon color="warn">delete</mat-icon>
                                     <span>Delete</span>
                                 </button>
@@ -159,7 +159,7 @@
                                     <mat-icon>edit</mat-icon>
                                     <span>Edit</span>
                                 </button>
-                                <button mat-menu-item (click)="deleteTask(task)">
+                                <button mat-menu-item (click)="deleteTask(task)" *appHasRole="['Admin', 'Manager']">
                                     <mat-icon color="warn">delete</mat-icon>
                                     <span>Delete</span>
                                 </button>
