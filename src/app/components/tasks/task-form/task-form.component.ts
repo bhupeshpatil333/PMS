@@ -31,6 +31,7 @@ export class TaskFormComponent implements OnInit {
             description: [''],
             priority: ['Medium', Validators.required],
             status: ['To Do', Validators.required],
+            startDate: [new Date(), Validators.required],
             dueDate: [new Date(), Validators.required],
             projectId: [this.data.projectId],
             assignedTo: [null, Validators.required]
@@ -41,8 +42,33 @@ export class TaskFormComponent implements OnInit {
         this.getAllUsers();
         if (this.data && this.data.task) {
             this.isEditMode = true;
-            this.form.patchValue(this.data.task);
-            this.form.patchValue({ projectId: this.data.projectId }); // Ensure projectId is kept
+            const task = { ...this.data.task };
+
+            // Format dates
+            if (task.dueDate) {
+                task.dueDate = new Date(task.dueDate).toISOString().split('T')[0];
+            }
+            if (task.startDate) {
+                task.startDate = new Date(task.startDate).toISOString().split('T')[0];
+            }
+
+            // Fallback for assignedTo
+            if (!task.assignedTo) {
+                if (task.assignedUser) {
+                    task.assignedTo = task.assignedUser.id;
+                } else if (task.user) {
+                    task.assignedTo = task.user.id;
+                }
+            }
+
+            console.log('Patching Task:', task); // Debug log
+            console.log('Employees List:', this.employees); // Debug log
+
+            this.form.patchValue(task);
+            this.form.patchValue({
+                projectId: this.data.projectId,
+                assignedTo: task.assignedTo
+            });
         } else if (this.data && this.data.projectId) {
             this.form.patchValue({ projectId: this.data.projectId });
         }
@@ -50,6 +76,8 @@ export class TaskFormComponent implements OnInit {
 
     submit() {
         if (this.form.invalid) return;
+
+        console.log('Submitting Task Payload:', this.form.value); // Debug log
 
         if (this.isEditMode) {
             this.taskService.updateTask(this.data.task.id, this.form.value).subscribe({
