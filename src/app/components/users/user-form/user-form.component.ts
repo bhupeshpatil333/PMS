@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserService } from '../../../services/user.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-user-form',
@@ -19,6 +20,7 @@ export class UserFormComponent implements OnInit {
         private fb: FormBuilder,
         private userService: UserService,
         private dialogRef: MatDialogRef<UserFormComponent>,
+        private snackBar: MatSnackBar,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.form = this.fb.group({
@@ -43,17 +45,31 @@ export class UserFormComponent implements OnInit {
     submit() {
         if (this.form.invalid) return;
 
-        if (this.isEditMode) {
-            this.userService.updateUser(this.data.id, this.form.value).subscribe({
-                next: () => this.dialogRef.close(true),
-                error: (err) => console.error(err)
-            });
-        } else {
-            this.userService.createUser(this.form.value).subscribe({
-                next: () => this.dialogRef.close(true),
-                error: (err) => console.error(err)
-            });
-        }
+        const request$ = this.isEditMode
+            ? this.userService.updateUser(this.data.id, this.form.value)
+            : this.userService.createUser(this.form.value);
+
+        request$.subscribe({
+            next: () => {
+                this.snackBar.open(
+                    this.isEditMode ? 'User updated successfully' : 'User created successfully',
+                    'Close',
+                    { duration: 3000 }
+                );
+                // Wrap in setTimeout to ensure it runs in the next tick
+                setTimeout(() => {
+                    this.dialogRef.close(true);
+                }, 100);
+            },
+            error: (err) => {
+                console.error(err);
+                this.snackBar.open(
+                    'Failed to save user. Please try again.',
+                    'Close',
+                    { duration: 3000, panelClass: ['error-snackbar'] }
+                );
+            }
+        });
     }
 
     close() {

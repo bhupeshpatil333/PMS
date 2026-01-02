@@ -24,7 +24,7 @@
                 <span class="fw-bold nav-text" *ngIf="!isSidebarCollapsed">Dashboard</span>
             </a>
 
-            <a *appHasRole="['Admin', 'Manager']" routerLink="/projects" routerLinkActive="active"
+            <a *appHasRole="['Admin', 'Manager', 'Employee']" routerLink="/projects" routerLinkActive="active"
                 class="list-group-item list-group-item-action bg-transparent rounded-3 border-0 mb-2 d-flex align-items-center gap-3 py-3"
                 title="Projects">
                 <div class="icon-wrapper text-center" style="width: 24px;">

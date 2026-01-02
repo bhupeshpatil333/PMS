@@ -7,6 +7,7 @@ import { TaskService } from '../../../services/task.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { User } from '../../../models/user.interface';
 import { AuthService } from '../../../services/auth.service';
+import { take } from 'rxjs';
 
 /** Custom validator to ensure Due Date is after Start Date */
 const dateRangeValidator: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
@@ -15,9 +16,11 @@ const dateRangeValidator: ValidatorFn = (group: AbstractControl): ValidationErro
     return start && end && new Date(start) > new Date(end) ? { dateRange: true } : null;
 };
 
+import { HasRoleDirective } from '../../../core/directives/has-role.directive';
+
 @Component({
     selector: 'app-task-form',
-    imports: [ReactiveFormsModule, SharedMaterialModule],
+    imports: [ReactiveFormsModule, SharedMaterialModule, HasRoleDirective],
     templateUrl: './task-form.component.html',
     styleUrl: './task-form.component.scss'
 })
@@ -41,7 +44,7 @@ export class TaskFormComponent implements OnInit {
             description: [''],
             priority: ['Medium', Validators.required],
             status: ['To Do', Validators.required],
-            startDate: [null], // Optional initially, but validated if present
+            startDate: [null],
             dueDate: [null, Validators.required],
             projectId: [this.data.projectId],
             assignedTo: [null, Validators.required]
@@ -49,12 +52,21 @@ export class TaskFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.getAllUsers();
+        // Check for Employee Role and auto-assign
+        this.authService.user$.pipe(take(1)).subscribe(user => {
+            if (user && user.role === 'Employee') {
+                this.form.patchValue({ assignedTo: user.id });
+                this.form.get('assignedTo')?.clearValidators();
+                this.form.get('assignedTo')?.updateValueAndValidity();
+            } else {
+                this.getAllUsers();
+            }
+        });
+
         if (this.data && this.data.task) {
             this.isEditMode = true;
             const task = { ...this.data.task };
 
-            // Format dates
             if (task.dueDate) {
                 task.dueDate = new Date(task.dueDate).toISOString().split('T')[0];
             }
@@ -62,7 +74,6 @@ export class TaskFormComponent implements OnInit {
                 task.startDate = new Date(task.startDate).toISOString().split('T')[0];
             }
 
-            // Fallback for assignedTo
             if (!task.assignedTo) {
                 if (task.assignedUser) {
                     task.assignedTo = task.assignedUser.id;
@@ -70,10 +81,6 @@ export class TaskFormComponent implements OnInit {
                     task.assignedTo = task.user.id;
                 }
             }
-
-            console.log('Patching Task:', task); // Debug log
-            console.log('Employees List:', this.employees); // Debug log
-
             this.form.patchValue(task);
             this.form.patchValue({
                 projectId: this.data.projectId,

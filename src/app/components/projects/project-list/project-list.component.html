@@ -2,7 +2,7 @@
     <div class="col">
         <h3 class="text-secondary fw-bold mb-0">Projects</h3>
     </div>
-    <div class="col-auto">
+    <div class="col-auto" *appHasRole="['Admin', 'Manager']">
         <button class="btn btn-primary d-flex align-items-center gap-2 rounded-3 shadow-sm px-4" (click)="openForm()">
             <i class="bi bi-plus-lg"></i>
             <span>New Project</span>
@@ -77,6 +77,15 @@
             <!-- Decoration -->
             <div class="position-absolute bottom-0 end-0 p-0 m-0 decoration-circle"></div>
         </div>
+    </div>
+    }
+    @if (res.data.length === 0) {
+    <div class="col-12 text-center py-5">
+        <div class="text-muted opacity-50 mb-3">
+            <i class="bi bi-clipboard-check display-1"></i>
+        </div>
+        <h4 class="fw-bold text-secondary">No task available</h4>
+        <p class="text-muted">You don't have any assigned tasks in these projects.</p>
     </div>
     }
 </div>

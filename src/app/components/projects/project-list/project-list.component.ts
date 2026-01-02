@@ -1,5 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { AuthService } from '../../../services/auth.service';
+import { combineLatest, of, forkJoin } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
+import { TaskService } from '../../../services/task.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { ProjectService } from '../../../services/project.service';
@@ -24,8 +28,26 @@ export class ProjectListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   searchControl = new FormControl('');
 
-  constructor(private projectService: ProjectService, private dialog: MatDialog) {
-    this.projects$ = this.projectService.projects$;
+  constructor(
+    private projectService: ProjectService,
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private taskService: TaskService
+  ) {
+    this.projects$ = combineLatest([
+      this.projectService.projects$,
+      this.authService.user$
+    ]).pipe(
+      switchMap(([res, user]) => {
+        if (!user || user.role === 'Admin' || user.role === 'Manager') {
+          return this.projectService.projects$;
+        } else {
+          return combineLatest([this.projectService.page$, this.projectService.search$]).pipe(
+            switchMap(([page, search]) => this.projectService.getMyProjects(page, search))
+          );
+        }
+      })
+    );
   }
 
   getProgress(project: any): number {

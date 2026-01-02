@@ -26,7 +26,7 @@ export const routes: Routes = [
                 component: ProjectListComponent,
                 canActivate: [roleGuard],
                 canDeactivate: [unsavedChangesGuard],
-                data: { roles: ['Admin', 'Manager'] }
+                data: { roles: ['Admin', 'Manager', 'Employee'] }
             },
             { path: 'tasks/:projectId', component: TaskListComponent, canDeactivate: [unsavedChangesGuard] },
             {
