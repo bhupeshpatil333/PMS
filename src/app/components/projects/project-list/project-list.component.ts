@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../../services/auth.service';
 import { combineLatest, of, forkJoin, shareReplay } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { map, switchMap, catchError, take } from 'rxjs/operators';
 import { TaskService } from '../../../services/task.service';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
@@ -53,22 +53,65 @@ export class ProjectListComponent implements OnInit {
             const projects = res.data || [];
             if (!projects.length) return of(res);
 
-            // Extract project IDs to fetch tasks in batch
-            const projectIds = projects.map((p: any) => p.id);
-            
-            // Fetch all tasks for all projects in a single batch operation
-            return this.taskService.getTasksByMultipleProjects(projectIds).pipe(
-              map((allTasks: any[][]) => {
-                // Assign tasks to each project
-                allTasks.forEach((tasks: any[], index: number) => {
-                  projects[index].tasks = tasks;
-                });
-                return res;
-              }),
-              catchError(() => {
-                // If batch operation fails, assign empty arrays
-                projects.forEach((p: any) => p.tasks = []);
-                return of(res);
+            // Check user role to determine which projects to show
+            return this.authService.user$.pipe(
+              take(1),
+              switchMap((user: any) => {
+                if (user && user.role === 'Employee') {
+                  // For employees, only fetch tasks for projects to determine which projects to show
+                  const projectIds = projects.map((p: any) => p.id);
+                  
+                  // Fetch all tasks for all projects in a single batch operation
+                  return this.taskService.getTasksByMultipleProjects(projectIds).pipe(
+                    map((allTasks: any[][]) => {
+                      // Assign tasks to each project
+                      allTasks.forEach((tasks: any[], index: number) => {
+                        projects[index].tasks = tasks;
+                      });
+                      
+                      // Filter projects to only include those where employee has assigned tasks
+                      const userId = user.id;
+                      const filteredProjects = projects.filter((project: any) => {
+                        return project.tasks && project.tasks.some((task: any) => {
+                          // Check if task is assigned to current user
+                          if (task.assignedUser && task.assignedUser.id) {
+                            return task.assignedUser.id === userId;
+                          }
+                          return task.assignedTo === userId;
+                        });
+                      });
+                      
+                      // Return filtered result
+                      return {
+                        ...res,
+                        data: filteredProjects
+                      };
+                    }),
+                    catchError(() => {
+                      // If batch operation fails, return empty result for employee
+                      return of({ ...res, data: [] });
+                    })
+                  );
+                } else {
+                  // For managers and admins, fetch tasks and return all projects
+                  const projectIds = projects.map((p: any) => p.id);
+                  
+                  // Fetch all tasks for all projects in a single batch operation
+                  return this.taskService.getTasksByMultipleProjects(projectIds).pipe(
+                    map((allTasks: any[][]) => {
+                      // Assign tasks to each project
+                      allTasks.forEach((tasks: any[], index: number) => {
+                        projects[index].tasks = tasks;
+                      });
+                      return res;
+                    }),
+                    catchError(() => {
+                      // If batch operation fails, assign empty arrays
+                      projects.forEach((p: any) => p.tasks = []);
+                      return of(res);
+                    })
+                  );
+                }
               })
             );
           })
