@@ -4,10 +4,18 @@
             <h2 class="fw-bold mb-1">Users</h2>
             <p class="text-muted mb-0">Manage system users and their roles</p>
         </div>
-        <button mat-flat-button color="primary" (click)="openUserForm()">
-            <mat-icon>add</mat-icon>
-            Add User
-        </button>
+        <div class="d-flex gap-2">
+            <!-- Active/Inactive Filter Toggle -->
+            <mat-button-toggle-group [value]="activeFilter" (change)="onFilterChange($event)">
+                <mat-button-toggle value="all">All</mat-button-toggle>
+                <mat-button-toggle value="active">Active</mat-button-toggle>
+                <mat-button-toggle value="inactive">Inactive</mat-button-toggle>
+            </mat-button-toggle-group>
+            <button mat-flat-button color="primary" (click)="openUserForm()">
+                <mat-icon>add</mat-icon>
+                Add User
+            </button>
+        </div>
     </div>
 
     <div class="mat-elevation-z0 border rounded-3 overflow-hidden bg-white">
@@ -43,6 +51,18 @@
                         [class.badge-soft-warning]="user.role === 'Manager'"
                         [class.badge-soft-info]="user.role === 'Employee'">
                         {{user.role}}
+                    </span>
+                </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary"> Status </th>
+                <td mat-cell *matCellDef="let user">
+                    <span class="badge rounded-pill fw-normal px-3 py-2"
+                        [class.badge-soft-success]="user.isActive !== false"
+                        [class.badge-soft-danger]="user.isActive === false">
+                        {{ user.isActive !== false ? 'Active' : 'Inactive' }}
                     </span>
                 </td>
             </ng-container>

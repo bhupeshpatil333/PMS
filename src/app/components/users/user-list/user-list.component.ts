@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { UserService } from '../../../services/user.service';
 import { User } from '../../../models/user.interface';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
@@ -10,13 +11,14 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
 
 @Component({
     selector: 'app-user-list',
-    imports: [SharedMaterialModule],
+    imports: [SharedMaterialModule, MatButtonToggleModule],
     templateUrl: './user-list.component.html',
     styleUrl: './user-list.component.scss'
 })
 export class UserListComponent implements OnInit {
     dataSource = new MatTableDataSource<User>([]);
-    displayedColumns: string[] = ['fullName', 'email', 'role', 'actions'];
+    displayedColumns: string[] = ['fullName', 'email', 'role', 'status', 'actions'];
+    activeFilter: 'all' | 'active' | 'inactive' = 'all';
 
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -28,9 +30,26 @@ export class UserListComponent implements OnInit {
 
     loadUsers() {
         this.userService.getAllUsers().subscribe(users => {
-            this.dataSource.data = users;
+            this.filterUsers(users);
             this.dataSource.paginator = this.paginator;
         });
+    }
+
+    filterUsers(users: User[]) {
+        let filteredUsers = users;
+
+        if (this.activeFilter === 'active') {
+            filteredUsers = users.filter(user => user.isActive !== false);
+        } else if (this.activeFilter === 'inactive') {
+            filteredUsers = users.filter(user => user.isActive === false);
+        }
+
+        this.dataSource.data = filteredUsers;
+    }
+
+    onFilterChange(event: MatButtonToggleChange) {
+        this.activeFilter = event.value;
+        this.loadUsers();
     }
 
     openUserForm(user?: User) {

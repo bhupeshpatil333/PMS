@@ -39,10 +39,13 @@ export class UserFormComponent implements OnInit {
             // Create a copy of the data without the password to avoid pre-filling it
             const { password, ...userData } = this.data;
             this.form.patchValue(userData);
-            
+
             // Clear password field initially
             this.form.get('password')?.clearValidators();
             this.form.get('password')?.updateValueAndValidity();
+
+            // Initialize password as null for edit mode
+            this.form.get('password')?.setValue(null);
         } else {
             this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
             this.form.get('password')?.updateValueAndValidity();
@@ -51,16 +54,20 @@ export class UserFormComponent implements OnInit {
 
     submit() {
         if (this.form.invalid) return;
-        
+
         let formData = { ...this.form.value };
-        
-        // For edit mode, only send password if it's being changed
+
+        // For edit mode, handle password appropriately
         if (this.isEditMode) {
-            // If password field is empty in edit mode, remove it from the request
+            // If password field is empty in edit mode, set it to null instead of removing it
+            // This ensures the backend receives a consistent DTO structure
             if (!formData.password) {
-                const { password, ...updatedData } = formData;
-                formData = updatedData;
+                formData.password = null;
             }
+            if (formData.password) {
+                formData.isActive = true;
+            }
+
         }
 
         const request$ = this.isEditMode
