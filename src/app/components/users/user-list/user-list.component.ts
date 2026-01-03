@@ -2,23 +2,24 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UserService } from '../../../services/user.service';
 import { User } from '../../../models/user.interface';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { UserStatusEnum } from '../../../core/enums/user.enum';
 
 @Component({
     selector: 'app-user-list',
-    imports: [SharedMaterialModule, MatButtonToggleModule],
+    imports: [SharedMaterialModule],
     templateUrl: './user-list.component.html',
     styleUrl: './user-list.component.scss'
 })
 export class UserListComponent implements OnInit {
     dataSource = new MatTableDataSource<User>([]);
     displayedColumns: string[] = ['fullName', 'email', 'role', 'status', 'actions'];
-    activeFilter: 'all' | 'active' | 'inactive' = 'all';
+    activeFilter: UserStatusEnum | 'All' = 'All';
 
     @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -38,9 +39,9 @@ export class UserListComponent implements OnInit {
     filterUsers(users: User[]) {
         let filteredUsers = users;
 
-        if (this.activeFilter === 'active') {
+        if (this.activeFilter === UserStatusEnum.Active) {
             filteredUsers = users.filter(user => user.isActive !== false);
-        } else if (this.activeFilter === 'inactive') {
+        } else if (this.activeFilter === UserStatusEnum.Inactive) {
             filteredUsers = users.filter(user => user.isActive === false);
         }
 

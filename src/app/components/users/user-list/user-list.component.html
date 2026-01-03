@@ -7,9 +7,9 @@
         <div class="d-flex gap-2">
             <!-- Active/Inactive Filter Toggle -->
             <mat-button-toggle-group [value]="activeFilter" (change)="onFilterChange($event)">
-                <mat-button-toggle value="all">All</mat-button-toggle>
-                <mat-button-toggle value="active">Active</mat-button-toggle>
-                <mat-button-toggle value="inactive">Inactive</mat-button-toggle>
+                <mat-button-toggle value="All">All</mat-button-toggle>
+                <mat-button-toggle value="Active">Active</mat-button-toggle>
+                <mat-button-toggle value="Inactive">Inactive</mat-button-toggle>
             </mat-button-toggle-group>
             <button mat-flat-button color="primary" (click)="openUserForm()">
                 <mat-icon>add</mat-icon>
