@@ -14,7 +14,6 @@ export class BaseApiService {
   get<T>(url: string, params?: any): Observable<T> {
     return this.http.get<T>(`${this.API_URL}/${url}`, { params })
       .pipe(
-        retry(1),
         catchError(this.handleError)
       );
   }

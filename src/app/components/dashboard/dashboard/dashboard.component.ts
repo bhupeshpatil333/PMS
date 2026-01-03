@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ProjectService } from '../../../services/project.service';
-import { map, Observable, switchMap } from 'rxjs';
+import { map, Observable, shareReplay, switchMap } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../../services/auth.service';
@@ -22,7 +22,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.stats$ = this.authService.user$.pipe(
       switchMap(user => {
-        if (user?.role === 'Employee') {
+        if (user?.role === 'Employee' || user?.role === 'Manager') {
           return this.projectService.getMyAllProjects();
         }
         return this.projectService.getAllProjects();
@@ -37,7 +37,8 @@ export class DashboardComponent implements OnInit {
           toDo: projects.filter((p: any) => p.status === 'To Do').length,
           recent: projects.slice(0, 5)
         };
-      })
+      }),
+      shareReplay(1)
     );
   }
 }

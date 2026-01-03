@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { AuthService } from '../../../services/auth.service';
-import { combineLatest, of, forkJoin } from 'rxjs';
+import { combineLatest, of, forkJoin, shareReplay } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 import { TaskService } from '../../../services/task.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -38,9 +38,11 @@ export class ProjectListComponent implements OnInit {
     this.projects$ = this.authService.user$.pipe(
       switchMap(user => {
         let projectsO$;
-        if (!user || user.role === 'Admin') {
+        if (!user || user.role === 'Admin' || user.role === 'Manager') {
+          // Admins and Managers can see all projects
           projectsO$ = this.projectService.projects$;
         } else {
+          // Employees can only see projects assigned to them
           projectsO$ = combineLatest([this.projectService.page$, this.projectService.search$]).pipe(
             switchMap(([page, search]) => this.projectService.getMyProjects(page, search))
           );
@@ -51,24 +53,28 @@ export class ProjectListComponent implements OnInit {
             const projects = res.data || [];
             if (!projects.length) return of(res);
 
-            // Fetch tasks for each project to calculate progress
-            const tasksRequests = projects.map((p: any) =>
-              this.taskService.getTasksByProject(p.id).pipe(
-                catchError(() => of([]))
-              )
-            );
-
-            return forkJoin(tasksRequests).pipe(
-              map((tasksLists: any) => {
-                tasksLists.forEach((tasks: any, index: number) => {
+            // Extract project IDs to fetch tasks in batch
+            const projectIds = projects.map((p: any) => p.id);
+            
+            // Fetch all tasks for all projects in a single batch operation
+            return this.taskService.getTasksByMultipleProjects(projectIds).pipe(
+              map((allTasks: any[][]) => {
+                // Assign tasks to each project
+                allTasks.forEach((tasks: any[], index: number) => {
                   projects[index].tasks = tasks;
                 });
                 return res;
+              }),
+              catchError(() => {
+                // If batch operation fails, assign empty arrays
+                projects.forEach((p: any) => p.tasks = []);
+                return of(res);
               })
             );
           })
         );
-      })
+      }),
+      shareReplay(1)
     );
   }
 
@@ -129,10 +135,7 @@ export class ProjectListComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.projectService.softDelete(project.id).subscribe(() => {
-          // Refresh list or rely on observable to update if implemented in service
-          // Here we might need to manually trigger refresh or ensure observable emits
-          // For now assuming subscriptions handle it or we force reload
-          window.location.reload(); // Simple refresh to ensure state, better to use observable refresh
+          // List automatically refreshes via service observable tap
         });
       }
     });

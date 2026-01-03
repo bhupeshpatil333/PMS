@@ -7,6 +7,7 @@ import { TaskService } from '../../../services/task.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { User } from '../../../models/user.interface';
 import { AuthService } from '../../../services/auth.service';
+import { UserService } from '../../../services/user.service';
 import { take } from 'rxjs';
 
 /** Custom validator to ensure Due Date is after Start Date */
@@ -35,6 +36,7 @@ export class TaskFormComponent implements OnInit {
         private fb: FormBuilder,
         private taskService: TaskService,
         private authService: AuthService,
+        private userService: UserService,
         private dialogRef: MatDialogRef<TaskFormComponent>,
         private dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -136,7 +138,7 @@ export class TaskFormComponent implements OnInit {
     }
 
     getAllUsers() {
-        this.authService.getAllEmpUsers().subscribe({
+        this.userService.getEmployees().subscribe({
             next: (res) => {
                 this.employees = res;
             },

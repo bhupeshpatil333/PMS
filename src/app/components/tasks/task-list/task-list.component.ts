@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TaskService } from '../../../services/task.service';
 import { AsyncPipe, DatePipe } from '@angular/common';
-import { map, Observable } from 'rxjs';
+import { map, Observable, take } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from '../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ProjectService } from '../../../services/project.service';
 import { HasRoleDirective } from '../../../core/directives/has-role.directive';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-task-list',
@@ -33,6 +34,7 @@ export class TaskListComponent implements OnInit {
     private route: ActivatedRoute,
     private taskService: TaskService,
     private projectService: ProjectService,
+    private authService: AuthService,
     private dialog: MatDialog
   ) { }
 
@@ -54,10 +56,25 @@ export class TaskListComponent implements OnInit {
   }
 
   loadTasks(id: number) {
-    this.taskService.getTasksByProject(id).subscribe(tasks => {
-      this.todoTasks = tasks.filter(t => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
-      this.inProgressTasks = tasks.filter(t => t.status === 'In Progress');
-      this.doneTasks = tasks.filter(t => t.status === 'Done');
+    // Check user role to determine which tasks to load
+    this.authService.user$.pipe(take(1)).subscribe(user => {
+      if (user && user.role === 'Employee') {
+        // Employees can only see their assigned tasks
+        if (user.id) {
+          this.taskService.getMyTasksForProject(id, user.id).subscribe(tasks => {
+            this.todoTasks = tasks.filter((t: any) => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
+            this.inProgressTasks = tasks.filter((t: any) => t.status === 'In Progress');
+            this.doneTasks = tasks.filter((t: any) => t.status === 'Done');
+          });
+        }
+      } else {
+        // Managers and Admins can see all tasks for the project
+        this.taskService.getTasksByProject(id).subscribe(tasks => {
+          this.todoTasks = tasks.filter((t: any) => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
+          this.inProgressTasks = tasks.filter((t: any) => t.status === 'In Progress');
+          this.doneTasks = tasks.filter((t: any) => t.status === 'Done');
+        });
+      }
     });
   }
 

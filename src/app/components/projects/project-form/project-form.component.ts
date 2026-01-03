@@ -6,6 +6,7 @@ import { ProjectService } from '../../../services/project.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { User } from '../../../models/user.interface';
 import { AuthService } from '../../../services/auth.service';
+import { UserService } from '../../../services/user.service';
 
 import { HasRoleDirective } from '../../../core/directives/has-role.directive';
 
@@ -31,6 +32,7 @@ export class ProjectFormComponent implements OnInit {
         private fb: FormBuilder,
         private projectService: ProjectService,
         private authService: AuthService,
+        private userService: UserService,
         private dialogRef: MatDialogRef<ProjectFormComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -47,7 +49,7 @@ export class ProjectFormComponent implements OnInit {
     ngOnInit(): void {
         this.authService.user$.pipe(take(1)).subscribe(user => {
             if (user && user.role === 'Admin') {
-                this.authService.getAllManagers().subscribe(users => {
+                this.userService.getManagers().subscribe(users => {
                     this.users = users;
                 });
             }

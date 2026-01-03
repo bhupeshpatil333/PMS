@@ -56,15 +56,6 @@ export class AuthService {
     return this.api.post('auth/register', data);
   }
 
-  getAllUsers(): Observable<User[]> {
-    return this.api.get<User[]>('users');
-  }
-  getAllEmpUsers(): Observable<User[]> {
-    return this.api.get<User[]>('users/employees');
-  }
 
-  getAllManagers(): Observable<User[]> {
-    return this.api.get<User[]>('users/managers');
-  }
 
 }
