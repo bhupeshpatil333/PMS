@@ -8,7 +8,7 @@ import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-user-form',
-    imports: [ReactiveFormsModule, SharedMaterialModule],
+    imports: [ReactiveFormsModule, SharedMaterialModule, NgIf],
     templateUrl: './user-form.component.html',
     styleUrl: './user-form.component.scss'
 })

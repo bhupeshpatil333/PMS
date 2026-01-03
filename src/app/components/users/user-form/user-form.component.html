@@ -27,14 +27,12 @@
                 <label for="email" class="text-secondary">Email address</label>
             </div>
 
-            @if(!isEditMode) {
-            <div class="form-floating mb-3">
+            <div *ngIf="!isEditMode" class="form-floating mb-3">
                 <input type="password" class="form-control bg-light border-0 shadow-none fw-medium" id="password"
                     placeholder="Password" formControlName="password">
                 <label for="password" class="text-secondary">Password</label>
             </div>
-            } @else {
-            <div class="mb-3">
+            <div *ngIf="isEditMode" class="mb-3">
                 <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Password</label>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-outline-primary btn-sm" (click)="togglePasswordChange()"
@@ -51,7 +49,6 @@
                     </div>
                 </div>
             </div>
-            }
 
             <div class="mb-4">
                 <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Role</label>
