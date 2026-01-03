@@ -57,9 +57,20 @@ export class TaskFormComponent implements OnInit {
         // Check for Employee Role and auto-assign
         this.authService.user$.pipe(take(1)).subscribe(user => {
             if (user && user.role === 'Employee') {
+                // Employees can only assign tasks to themselves
                 this.form.patchValue({ assignedTo: user.id });
                 this.form.get('assignedTo')?.clearValidators();
                 this.form.get('assignedTo')?.updateValueAndValidity();
+                
+                // For employees, ensure they can't modify other fields they shouldn't access
+                if (this.data && this.data.task) {
+                    // If in edit mode, check if task is assigned to them
+                    const task = this.data.task;
+                    if (task.assignedUser && task.assignedUser.id !== user.id) {
+                        // If trying to edit a task not assigned to them, disable form
+                        this.form.disable();
+                    }
+                }
             } else {
                 this.getAllUsers();
             }

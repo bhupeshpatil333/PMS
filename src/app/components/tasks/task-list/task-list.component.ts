@@ -62,9 +62,28 @@ export class TaskListComponent implements OnInit {
         // Employees can only see their assigned tasks
         if (user.id) {
           this.taskService.getMyTasksForProject(id, user.id).subscribe(tasks => {
-            this.todoTasks = tasks.filter((t: any) => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
-            this.inProgressTasks = tasks.filter((t: any) => t.status === 'In Progress');
-            this.doneTasks = tasks.filter((t: any) => t.status === 'Done');
+            // Sanitize tasks to prevent data leakage
+            const sanitizedTasks = tasks.map((task: any) => {
+              // Only return fields that the employee should see
+              return {
+                id: task.id,
+                title: task.title,
+                description: task.description,
+                status: task.status,
+                priority: task.priority,
+                startDate: task.startDate,
+                dueDate: task.dueDate,
+                projectId: task.projectId,
+                assignedUser: task.assignedUser ? {
+                  id: task.assignedUser.id,
+                  fullName: task.assignedUser.fullName
+                } : null
+              };
+            });
+            
+            this.todoTasks = sanitizedTasks.filter((t: any) => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
+            this.inProgressTasks = sanitizedTasks.filter((t: any) => t.status === 'In Progress');
+            this.doneTasks = sanitizedTasks.filter((t: any) => t.status === 'Done');
           });
         }
       } else {

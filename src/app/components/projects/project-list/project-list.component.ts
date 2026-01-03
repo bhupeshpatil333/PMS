@@ -87,10 +87,17 @@ export class ProjectListComponent implements OnInit {
                         });
                       });
                       
-                      // Return filtered result
+                      // Sanitize data to prevent data leakage - only return allowed fields
+                      const sanitizedProjects = filteredProjects.map((project: any) => {
+                        // Remove any sensitive fields that shouldn't be exposed to employees
+                        const { manager, managerId, ...safeProject } = project;
+                        return safeProject;
+                      });
+                      
+                      // Return filtered and sanitized result
                       return {
                         ...res,
-                        data: filteredProjects
+                        data: sanitizedProjects
                       };
                     }),
                     catchError(() => {
