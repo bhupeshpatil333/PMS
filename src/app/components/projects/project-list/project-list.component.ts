@@ -37,8 +37,14 @@ export class ProjectListComponent implements OnInit {
   ) {
     this.projects$ = this.authService.user$.pipe(
       switchMap(user => {
+        // Only make API calls if user is authenticated
+        if (!user) {
+          // Return empty result for unauthenticated users
+          return of({ data: [], totalCount: 0 });
+        }
+        
         let projectsO$;
-        if (!user || user.role === 'Admin') {
+        if (user.role === 'Admin') {
           // Only Admins can see all projects
           projectsO$ = this.projectService.projects$;
         } else {
