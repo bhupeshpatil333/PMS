@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserService } from '../../../services/user.service';
 import { SharedMaterialModule } from '../../../shared/shared-material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'app-user-form',
@@ -14,6 +15,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class UserFormComponent implements OnInit {
     form: FormGroup;
     isEditMode = false;
+    showPasswordChange = false;
     roles = ['Admin', 'Manager', 'Employee'];
 
     constructor(
@@ -26,7 +28,7 @@ export class UserFormComponent implements OnInit {
         this.form = this.fb.group({
             fullName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            password: [''], // Required only for create
+            password: [''], // For create or when changing password
             role: ['Employee', Validators.required]
         });
     }
@@ -34,20 +36,36 @@ export class UserFormComponent implements OnInit {
     ngOnInit(): void {
         if (this.data) {
             this.isEditMode = true;
-            this.form.patchValue(this.data);
-            this.form.get('password')?.clearValidators(); // No password update here for simplicity
+            // Create a copy of the data without the password to avoid pre-filling it
+            const { password, ...userData } = this.data;
+            this.form.patchValue(userData);
+            
+            // Clear password field initially
+            this.form.get('password')?.clearValidators();
             this.form.get('password')?.updateValueAndValidity();
         } else {
             this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+            this.form.get('password')?.updateValueAndValidity();
         }
     }
 
     submit() {
         if (this.form.invalid) return;
+        
+        let formData = { ...this.form.value };
+        
+        // For edit mode, only send password if it's being changed
+        if (this.isEditMode) {
+            // If password field is empty in edit mode, remove it from the request
+            if (!formData.password) {
+                const { password, ...updatedData } = formData;
+                formData = updatedData;
+            }
+        }
 
         const request$ = this.isEditMode
-            ? this.userService.updateUser(this.data.id, this.form.value)
-            : this.userService.createUser(this.form.value);
+            ? this.userService.updateUser(this.data.id, formData)
+            : this.userService.createUser(formData);
 
         request$.subscribe({
             next: () => {
@@ -72,7 +90,20 @@ export class UserFormComponent implements OnInit {
         });
     }
 
+    togglePasswordChange() {
+        this.showPasswordChange = true;
+        // Add validators when showing password field
+        this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+        this.form.get('password')?.updateValueAndValidity();
+    }
+
     close() {
+        // Reset password change state
+        this.showPasswordChange = false;
+        if (this.isEditMode) {
+            this.form.get('password')?.clearValidators();
+            this.form.get('password')?.updateValueAndValidity();
+        }
         this.dialogRef.close();
     }
 }

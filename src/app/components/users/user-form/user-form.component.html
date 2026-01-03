@@ -33,6 +33,24 @@
                     placeholder="Password" formControlName="password">
                 <label for="password" class="text-secondary">Password</label>
             </div>
+            } @else {
+            <div class="mb-3">
+                <label class="form-label text-secondary small fw-bold text-uppercase mb-2">Password</label>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="togglePasswordChange()"
+                        *ngIf="!showPasswordChange">
+                        Change Password
+                    </button>
+                    <div class="flex-grow-1" *ngIf="showPasswordChange">
+                        <div class="form-floating">
+                            <input type="password" class="form-control bg-light border-0 shadow-none fw-medium" id="password"
+                                placeholder="New Password" formControlName="password">
+                            <label for="password" class="text-secondary">New Password</label>
+                        </div>
+                        <div class="form-text text-muted small mt-1">Leave blank to keep current password</div>
+                    </div>
+                </div>
+            </div>
             }
 
             <div class="mb-4">

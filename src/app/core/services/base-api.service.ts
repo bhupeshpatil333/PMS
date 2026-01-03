@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, retry, throwError } from 'rxjs';
+import { Observable, retry, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +20,9 @@ export class BaseApiService {
   }
 
   post<T>(url: string, body: any): Observable<T> {
-    return this.http.post<T>(`${this.API_URL}/${url}`, body)
+    return this.http.post(`${this.API_URL}/${url}`, body, { observe: 'response' })
       .pipe(
+        map(response => response.body as T),
         catchError(this.handleError)
       );
   }

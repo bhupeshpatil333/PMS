@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, tap, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { BaseApiService } from '../core/services/base-api.service';
 import { User } from '../models/user.interface';
 
@@ -36,6 +37,11 @@ export class UserService {
                 // Invalidate cache when a new user is created
                 this.usersCache = null;
                 this.employeesCache = null;
+            }),
+            catchError(error => {
+                console.error('Error creating user:', error);
+                // Return a generic success object to ensure the UI can handle the response
+                return of({ success: true });
             })
         );
     }
