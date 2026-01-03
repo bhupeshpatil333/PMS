@@ -48,15 +48,18 @@
                         <mat-label class="text-secondary">Assign Manager</mat-label>
                         <mat-select formControlName="managerId" panelClass="custom-select-panel">
                             <mat-select-trigger>
-                                <div class="d-flex align-items-center"
-                                    *ngIf="form.get('managerId')?.value as selectedId">
-                                    @for (user of users; track user.id) {
-                                    @if (user.id === selectedId) {
+                                @if (form.get('managerId')?.value) {
+                                @for (user of users; track user.id) {
+                                @if (user.id === form.get('managerId')?.value) {
+                                <div class="d-flex align-items-center">
                                     <div class="user-avatar-small">{{ getInitials(user.fullName) }}</div>
                                     <span class="fw-medium text-dark">{{ user.fullName }}</span>
-                                    }
-                                    }
                                 </div>
+                                }
+                                }
+                                } @else {
+                                <span class="text-muted">Select a manager...</span>
+                                }
                             </mat-select-trigger>
 
                             @for (user of users; track user.id) {

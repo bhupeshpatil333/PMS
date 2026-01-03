@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, tap, shareReplay, Observable, combineLatest, switchMap, map, forkJoin, of, debounceTime, distinctUntilChanged } from 'rxjs';
+import { BehaviorSubject, tap, shareReplay, Observable, combineLatest, switchMap, map, forkJoin, of, debounceTime, distinctUntilChanged, catchError } from 'rxjs';
 import { BaseApiService } from '../core/services/base-api.service';
 
 @Injectable({
@@ -51,6 +51,8 @@ export class ProjectService {
           this.allProjectsCache = null;
           this.myAllProjectsCache = null;
           this.projectByIdCache.clear();
+          // Trigger refresh to reload the list
+          this.refresh();
         })
       );
   }
@@ -82,6 +84,8 @@ export class ProjectService {
           this.allProjectsCache = null;
           this.myAllProjectsCache = null;
           this.projectByIdCache.delete(id);
+          // Trigger refresh to reload the list
+          this.refresh();
         })
       );
   }
@@ -100,19 +104,30 @@ export class ProjectService {
   }
 
   getMyProjects(page: number, search: string): Observable<any> {
+    console.log('getMyProjects called with page:', page, 'search:', search);
+
     return this.api.get<any>('projects/assigned-to-me', {
       page,
       pageSize: 5,
       search
     }).pipe(
+      tap(response => {
+        console.log('Backend response for assigned-to-me:', response);
+      }),
       map(response => {
         if (Array.isArray(response)) {
+          console.log('Response is array, length:', response.length);
           return {
             data: response,
             totalCount: response.length
           };
         }
+        console.log('Response is object:', response);
         return response;
+      }),
+      catchError(err => {
+        console.error('Error fetching assigned projects:', err);
+        throw err;
       })
     );
   }

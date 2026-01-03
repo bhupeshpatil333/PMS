@@ -47,29 +47,95 @@ export class ProjectFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.authService.user$.pipe(take(1)).subscribe(user => {
-            if (user && user.role === 'Admin') {
-                this.userService.getManagers().subscribe(users => {
-                    this.users = users;
-                });
-            }
-        });
+        console.log('ProjectFormComponent initialized with data:', this.data);
 
+        // Check if we're in edit mode first
         if (this.data && this.data.id) {
             this.isEditMode = true;
-            this.form.patchValue(this.data);
         }
+
+        // Load managers for dropdown (ONLY FOR ADMIN)
+        this.authService.user$.pipe(take(1)).subscribe(user => {
+            console.log('Current user:', user);
+
+            if (user && user.role === 'Admin') {
+                // Only Admins need to load managers list (for the Assign Manager dropdown)
+                console.log('Loading managers list for Admin...');
+                this.userService.getManagers().subscribe({
+                    next: (users) => {
+                        this.users = users;
+                        console.log('Loaded managers:', this.users);
+
+                        // Now that users are loaded, patch form values if in edit mode
+                        if (this.isEditMode) {
+                            this.patchFormData();
+                        }
+                    },
+                    error: (err) => {
+                        console.error('Error loading managers:', err);
+                        // Even if loading fails, still patch the form
+                        if (this.isEditMode) {
+                            this.patchFormData();
+                        }
+                    }
+                });
+            } else {
+                // Managers and other users don't need to load managers list
+                console.log('Skipping managers list load for non-Admin user');
+                // Just patch form data if in edit mode
+                if (this.isEditMode) {
+                    this.patchFormData();
+                }
+            }
+        });
+    }
+
+    private patchFormData(): void {
+        if (!this.data || !this.data.id) return;
+
+        console.log('Patching form with data:', this.data);
+
+        // Format dates properly for the form
+        const projectData = { ...this.data };
+        if (projectData.startDate) {
+            // Convert date string to proper format for date input
+            projectData.startDate = new Date(projectData.startDate).toISOString().split('T')[0];
+        }
+        if (projectData.endDate) {
+            // Convert date string to proper format for date input
+            projectData.endDate = new Date(projectData.endDate).toISOString().split('T')[0];
+        }
+
+        // Patch form values
+        this.form.patchValue(projectData);
+
+        console.log('Form values after patch:', this.form.value);
+        console.log('ManagerId value:', this.form.get('managerId')?.value);
     }
 
     submit() {
         if (this.form.invalid) return;
 
-        const formData = this.form.value;
+        const formData = { ...this.form.value };
+
+        console.log('Submitting form with data:', formData);
+        console.log('Manager ID being submitted:', formData.managerId);
+
+        // Format dates properly before sending to backend
+        if (formData.startDate) {
+            // Ensure date is in ISO string format
+            formData.startDate = new Date(formData.startDate).toISOString();
+        }
+        if (formData.endDate) {
+            // Ensure date is in ISO string format
+            formData.endDate = new Date(formData.endDate).toISOString();
+        }
 
         // Auto-assign Manager if current user is a Manager creating the project
         this.authService.user$.pipe(take(1)).subscribe(user => {
             if (user && user.role === 'Manager' && !formData.managerId) {
                 formData.managerId = user.id;
+                console.log('Auto-assigning manager:', user.id);
             }
 
             this.processSubmit(formData);
@@ -77,19 +143,29 @@ export class ProjectFormComponent implements OnInit {
     }
 
     processSubmit(data: any) {
+        console.log('Processing submit with final data:', data);
+
         if (this.isEditMode) {
+            console.log('Updating project:', this.data.id);
             this.projectService.updateProject(this.data.id, data).subscribe({
                 next: (res) => {
+                    console.log('Project updated successfully:', res);
                     this.dialogRef.close(true);
                 },
-                error: (err) => console.error(err)
+                error: (err) => {
+                    console.error('Error updating project:', err);
+                }
             });
         } else {
+            console.log('Creating new project');
             this.projectService.createProject(data).subscribe({
                 next: (res) => {
+                    console.log('Project created successfully:', res);
                     this.dialogRef.close(true);
                 },
-                error: (err) => console.error(err)
+                error: (err) => {
+                    console.error('Error creating project:', err);
+                }
             });
         }
     }

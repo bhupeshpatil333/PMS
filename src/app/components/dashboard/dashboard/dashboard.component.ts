@@ -23,8 +23,10 @@ export class DashboardComponent implements OnInit {
     this.stats$ = this.authService.user$.pipe(
       switchMap(user => {
         if (user?.role === 'Employee' || user?.role === 'Manager') {
+          // Employees and Managers see their assigned projects
           return this.projectService.getMyAllProjects();
         }
+        // Only Admins see all projects
         return this.projectService.getAllProjects();
       }),
       map((projects: any[]) => {

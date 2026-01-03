@@ -38,11 +38,11 @@ export class ProjectListComponent implements OnInit {
     this.projects$ = this.authService.user$.pipe(
       switchMap(user => {
         let projectsO$;
-        if (!user || user.role === 'Admin' || user.role === 'Manager') {
-          // Admins and Managers can see all projects
+        if (!user || user.role === 'Admin') {
+          // Only Admins can see all projects
           projectsO$ = this.projectService.projects$;
         } else {
-          // Employees can only see projects assigned to them
+          // Managers and Employees can only see projects assigned to them
           projectsO$ = combineLatest([this.projectService.page$, this.projectService.search$]).pipe(
             switchMap(([page, search]) => this.projectService.getMyProjects(page, search))
           );
