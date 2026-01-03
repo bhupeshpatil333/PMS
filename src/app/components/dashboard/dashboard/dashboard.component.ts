@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
           // Return empty array for unauthenticated users
           return of([]);
         }
-        
+
         if (user?.role === 'Employee' || user?.role === 'Manager') {
           // Employees and Managers see their assigned projects
           return this.projectService.getMyAllProjects();
@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit {
             recent: []
           };
         }
-        
+
         return {
           total: projects.length,
           pending: projects.filter((p: any) => p.status === 'Pending').length,

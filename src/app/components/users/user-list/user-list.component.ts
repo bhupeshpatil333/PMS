@@ -11,78 +11,78 @@ import { ConfirmationDialogComponent } from '../../../shared/components/confirma
 import { UserStatusEnum } from '../../../core/enums/user.enum';
 
 @Component({
-    selector: 'app-user-list',
-    imports: [SharedMaterialModule],
-    templateUrl: './user-list.component.html',
-    styleUrl: './user-list.component.scss'
+  selector: 'app-user-list',
+  imports: [SharedMaterialModule],
+  templateUrl: './user-list.component.html',
+  styleUrl: './user-list.component.scss'
 })
 export class UserListComponent implements OnInit {
-    dataSource = new MatTableDataSource<User>([]);
-    displayedColumns: string[] = ['fullName', 'email', 'role', 'status', 'actions'];
-    activeFilter: UserStatusEnum | 'All' = 'All';
+  dataSource = new MatTableDataSource<User>([]);
+  displayedColumns: string[] = ['fullName', 'email', 'role', 'status', 'actions'];
+  activeFilter: UserStatusEnum | 'All' = 'All';
 
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-    constructor(private userService: UserService, private dialog: MatDialog) { }
+  constructor(private userService: UserService, private dialog: MatDialog) { }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers().subscribe(users => {
+      this.filterUsers(users);
+      this.dataSource.paginator = this.paginator;
+    });
+  }
+
+  filterUsers(users: User[]) {
+    let filteredUsers = users;
+
+    if (this.activeFilter === UserStatusEnum.Active) {
+      filteredUsers = users.filter(user => user.isActive !== false);
+    } else if (this.activeFilter === UserStatusEnum.Inactive) {
+      filteredUsers = users.filter(user => user.isActive === false);
+    }
+
+    this.dataSource.data = filteredUsers;
+  }
+
+  onFilterChange(event: MatButtonToggleChange) {
+    this.activeFilter = event.value;
+    this.loadUsers();
+  }
+
+  openUserForm(user?: User) {
+    const dialogRef = this.dialog.open(UserFormComponent, {
+      width: '500px',
+      data: user || null
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.loadUsers();
-    }
+      }
+    });
+  }
 
-    loadUsers() {
-        this.userService.getAllUsers().subscribe(users => {
-            this.filterUsers(users);
-            this.dataSource.paginator = this.paginator;
+  deleteUser(user: User) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: {
+        title: 'Deactivate User?',
+        message: `Are you sure you want to deactivate ${user.fullName}?`,
+        confirmText: 'Yes, Deactivate',
+        cancelText: 'Cancel',
+        type: 'delete'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.deleteUser(user.id).subscribe(() => {
+          this.loadUsers();
         });
-    }
-
-    filterUsers(users: User[]) {
-        let filteredUsers = users;
-
-        if (this.activeFilter === UserStatusEnum.Active) {
-            filteredUsers = users.filter(user => user.isActive !== false);
-        } else if (this.activeFilter === UserStatusEnum.Inactive) {
-            filteredUsers = users.filter(user => user.isActive === false);
-        }
-
-        this.dataSource.data = filteredUsers;
-    }
-
-    onFilterChange(event: MatButtonToggleChange) {
-        this.activeFilter = event.value;
-        this.loadUsers();
-    }
-
-    openUserForm(user?: User) {
-        const dialogRef = this.dialog.open(UserFormComponent, {
-            width: '500px',
-            data: user || null
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.loadUsers();
-            }
-        });
-    }
-
-    deleteUser(user: User) {
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-            data: {
-                title: 'Deactivate User?',
-                message: `Are you sure you want to deactivate ${user.fullName}?`,
-                confirmText: 'Yes, Deactivate',
-                cancelText: 'Cancel',
-                type: 'delete'
-            }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.userService.deleteUser(user.id).subscribe(() => {
-                    this.loadUsers();
-                });
-            }
-        });
-    }
+      }
+    });
+  }
 }

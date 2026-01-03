@@ -42,7 +42,7 @@ export class ProjectListComponent implements OnInit {
           // Return empty result for unauthenticated users
           return of({ data: [], totalCount: 0 });
         }
-        
+
         let projectsO$;
         if (user.role === 'Admin') {
           // Only Admins can see all projects
@@ -66,7 +66,7 @@ export class ProjectListComponent implements OnInit {
                 if (user && user.role === 'Employee') {
                   // For employees, only fetch tasks for projects to determine which projects to show
                   const projectIds = projects.map((p: any) => p.id);
-                  
+
                   // Fetch all tasks for all projects in a single batch operation
                   return this.taskService.getTasksByMultipleProjects(projectIds).pipe(
                     map((allTasks: any[][]) => {
@@ -74,7 +74,7 @@ export class ProjectListComponent implements OnInit {
                       allTasks.forEach((tasks: any[], index: number) => {
                         projects[index].tasks = tasks;
                       });
-                      
+
                       // Filter projects to only include those where employee has assigned tasks
                       const userId = user.id;
                       const filteredProjects = projects.filter((project: any) => {
@@ -86,14 +86,14 @@ export class ProjectListComponent implements OnInit {
                           return task.assignedTo === userId;
                         });
                       });
-                      
+
                       // Sanitize data to prevent data leakage - only return allowed fields
                       const sanitizedProjects = filteredProjects.map((project: any) => {
                         // Remove any sensitive fields that shouldn't be exposed to employees
                         const { manager, managerId, ...safeProject } = project;
                         return safeProject;
                       });
-                      
+
                       // Return filtered and sanitized result
                       return {
                         ...res,
@@ -108,7 +108,7 @@ export class ProjectListComponent implements OnInit {
                 } else {
                   // For managers and admins, fetch tasks and return all projects
                   const projectIds = projects.map((p: any) => p.id);
-                  
+
                   // Fetch all tasks for all projects in a single batch operation
                   return this.taskService.getTasksByMultipleProjects(projectIds).pipe(
                     map((allTasks: any[][]) => {

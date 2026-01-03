@@ -80,7 +80,7 @@ export class TaskListComponent implements OnInit {
                 } : null
               };
             });
-            
+
             this.todoTasks = sanitizedTasks.filter((t: any) => t.status === 'Wiki' || t.status === 'To Do' || !t.status);
             this.inProgressTasks = sanitizedTasks.filter((t: any) => t.status === 'In Progress');
             this.doneTasks = sanitizedTasks.filter((t: any) => t.status === 'Done');

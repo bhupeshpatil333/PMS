@@ -61,7 +61,7 @@ export class TaskFormComponent implements OnInit {
                 this.form.patchValue({ assignedTo: user.id });
                 this.form.get('assignedTo')?.clearValidators();
                 this.form.get('assignedTo')?.updateValueAndValidity();
-                
+
                 // For employees, ensure they can't modify other fields they shouldn't access
                 if (this.data && this.data.task) {
                     // If in edit mode, check if task is assigned to them
