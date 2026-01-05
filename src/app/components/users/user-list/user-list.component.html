@@ -23,14 +23,14 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="fullName">
-        <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary"> Name </th>
+        <th mat-header-cell *matHeaderCellDef> Name </th>
         <td mat-cell *matCellDef="let user">
           <div class="d-flex align-items-center gap-3 py-2">
-            <div class="avatar-circle bg-primary-subtle text-primary fw-bold">
+            <div class="avatar-circle shadow-sm">
               {{user.fullName.charAt(0).toUpperCase()}}
             </div>
             <div class="d-flex flex-column">
-              <span class="fw-medium">{{user.fullName}}</span>
+              <span class="fw-bold text-dark">{{user.fullName}}</span>
             </div>
           </div>
         </td>
@@ -38,15 +38,15 @@
 
       <!-- Email Column -->
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary"> Email </th>
+        <th mat-header-cell *matHeaderCellDef> Email </th>
         <td mat-cell *matCellDef="let user" class="text-muted"> {{user.email}} </td>
       </ng-container>
 
       <!-- Role Column -->
       <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary"> Role </th>
+        <th mat-header-cell *matHeaderCellDef> Role </th>
         <td mat-cell *matCellDef="let user">
-          <span class="badge rounded-pill fw-normal px-3 py-2" [class.badge-soft-danger]="user.role === 'Admin'"
+          <span class="badge" [class.badge-soft-danger]="user.role === 'Admin'"
             [class.badge-soft-warning]="user.role === 'Manager'" [class.badge-soft-info]="user.role === 'Employee'">
             {{user.role}}
           </span>
@@ -55,9 +55,9 @@
 
       <!-- Status Column -->
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary"> Status </th>
+        <th mat-header-cell *matHeaderCellDef> Status </th>
         <td mat-cell *matCellDef="let user">
-          <span class="badge rounded-pill fw-normal px-3 py-2" [class.badge-soft-success]="user.isActive !== false"
+          <span class="badge" [class.badge-soft-success]="user.isActive !== false"
             [class.badge-soft-danger]="user.isActive === false">
             {{ user.isActive !== false ? 'Active' : 'Inactive' }}
           </span>
@@ -66,13 +66,12 @@
 
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="bg-light fw-bold text-secondary text-end pe-4"> Actions
-        </th>
+        <th mat-header-cell *matHeaderCellDef class="text-end pe-4"> Actions </th>
         <td mat-cell *matCellDef="let user" class="text-end pe-3">
-          <button mat-icon-button color="primary" (click)="openUserForm(user)" matTooltip="Edit">
+          <button mat-icon-button class="text-primary" (click)="openUserForm(user)" matTooltip="Edit">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="deleteUser(user)" matTooltip="Deactivate">
+          <button mat-icon-button class="text-danger" (click)="deleteUser(user)" matTooltip="Deactivate">
             <mat-icon>delete_outline</mat-icon>
           </button>
         </td>

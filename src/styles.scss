@@ -143,6 +143,33 @@ body {
     border-radius: 16px !important;
 }
 
+// Global Tooltip Style
+.mat-mdc-tooltip .mdc-tooltip__surface {
+    background-color: #1e293b !important; // Slate 800
+    color: white !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    padding: 6px 10px !important;
+    line-height: 1.4 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+// Global Snackbar
+.mat-mdc-snack-bar-container {
+    &.success-snackbar {
+        --mdc-snackbar-container-color: #059669; // Emerald 600
+        --mdc-snackbar-supporting-text-color: white;
+        --mat-snack-bar-button-color: white;
+    }
+
+    &.error-snackbar {
+        --mdc-snackbar-container-color: #dc2626; // Red 600
+        --mdc-snackbar-supporting-text-color: white;
+        --mat-snack-bar-button-color: white;
+    }
+}
+
 .mat-mdc-menu-panel {
     background-color: #FFFFFF !important;
     border-radius: 12px !important;

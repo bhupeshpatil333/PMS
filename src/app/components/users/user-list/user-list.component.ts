@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { UserStatusEnum } from '../../../core/enums/user.enum';
   templateUrl: './user-list.component.html',
   styleUrl: './user-list.component.scss'
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<User>([]);
   displayedColumns: string[] = ['fullName', 'email', 'role', 'status', 'actions'];
   activeFilter: UserStatusEnum | 'All' = 'All';
@@ -29,10 +29,13 @@ export class UserListComponent implements OnInit {
     this.loadUsers();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
   loadUsers() {
     this.userService.getAllUsers().subscribe(users => {
       this.filterUsers(users);
-      this.dataSource.paginator = this.paginator;
     });
   }
 
