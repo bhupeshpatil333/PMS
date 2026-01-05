@@ -90,20 +90,20 @@ $sidebar-collapsed-width: 80px;
     }
 
     .sidebar-footer {
-        padding: 1rem !important;
-        justify-content: center;
+        padding: 0.5rem !important;
 
-        .d-flex {
-            justify-content: center;
-        }
+        .profile-btn {
+            justify-content: center !important;
+            padding: 0.5rem 0 !important;
 
-        .avatar-box {
-            margin: 0 !important;
-        }
+            .profile-info,
+            .bi-chevron-up {
+                display: none !important;
+            }
 
-        .btn-sm,
-        .profile-details {
-            display: none !important;
+            .avatar-wrapper {
+                margin: 0 !important;
+            }
         }
     }
 }
@@ -151,53 +151,57 @@ $sidebar-collapsed-width: 80px;
 }
 
 // Explicit Profile Button Styling to fix alignment issues
+// Profile Section Styling
 .sidebar-footer {
+    background-color: #ffffff;
+
     .profile-btn {
-        display: flex !important;
-        align-items: center !important;
-        width: 100%;
-        text-align: left;
-        background: transparent;
-        border: none;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
+        transition: all 0.2s ease-in-out;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
 
         &:hover {
-            background-color: #F3F4F6;
-        }
+            background-color: #f8fafc !important; // Slate 50
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 
-        /* Avatar Container */
-        .avatar-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            /* Ensure avatar stays left */
-            margin-right: 0.75rem;
-        }
-
-        /* Text Container */
-        .profile-details {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            line-height: 1.2;
-            flex-grow: 1;
-            /* Take up available space */
-            overflow: hidden;
-
-            span {
-                display: block;
-                /* Force block to prevent side-by-side */
+            i.bi-chevron-up {
+                opacity: 1 !important;
+                color: var(--primary-color) !important;
+                transform: translateY(-1px);
             }
         }
 
-        /* Menu Icon */
-        mat-icon {
-            margin-left: auto;
-            /* Push to far right */
-            flex-shrink: 0;
+        &:active {
+            transform: translateY(0);
+            background-color: #f1f5f9 !important; // Slate 100
         }
+
+        i.bi-chevron-up {
+            transition: all 0.2s;
+        }
+
+        .avatar-box {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+            transition: transform 0.2s;
+        }
+
+        &:hover .avatar-box {
+            transform: scale(1.05);
+        }
+    }
+}
+
+// Global Menu Styling override for this specific menu if needed or rely on class
+::ng-deep .profile-menu-custom {
+    border-radius: 1rem !important;
+    overflow: hidden !important;
+    min-width: 220px !important;
+
+    .mat-mdc-menu-content {
+        padding: 0.5rem !important;
     }
 }

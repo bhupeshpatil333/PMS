@@ -47,29 +47,55 @@
         </div>
 
         <!-- Bottom Profile Section -->
-        <div class="sidebar-footer p-3 border-top mt-auto" *ngIf="user$ | async as user">
-            <!-- Profile clickable area -->
-            <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn" style="height: auto;">
-                <div class="avatar-box rounded-circle bg-primary-subtle text-primary fw-bold"
-                    style="width: 40px; height: 40px;">
-                    {{ user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' }}
+        <div class="sidebar-footer border-top mt-auto p-3" *ngIf="user$ | async as user">
+            <button
+                class="profile-btn w-100 d-flex align-items-center p-2 rounded-3 border-0 bg-transparent text-start ripple-effect"
+                [matMenuTriggerFor]="userMenu">
+
+                <!-- Avatar -->
+                <div class="avatar-wrapper position-relative">
+                    <div class="avatar-box rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
+                        style="width: 40px; height: 40px;">
+                        {{ user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' }}
+                    </div>
+                    <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"
+                        style="transform: translate(-2px, -2px); width: 10px; height: 10px; display: block;">
+                    </span>
                 </div>
-                <div class="profile-details" *ngIf="!isSidebarCollapsed">
-                    <span class="fw-bold text-dark text-truncate small" style="max-width: 140px;">{{
-                        user.fullName }}</span>
-                    <span class="text-muted small text-truncate" style="font-size: 0.75rem;">{{ user.role }}</span>
+
+                <!-- Text Info -->
+                <div class="profile-info ms-3 overflow-hidden flex-grow-1" *ngIf="!isSidebarCollapsed">
+                    <div class="fw-bold text-dark text-truncate" style="font-size: 0.9rem; letter-spacing: -0.01em;">
+                        {{ user.fullName }}
+                    </div>
+                    <div class="text-muted small text-truncate" style="font-size: 0.75rem; letter-spacing: 0.01em;">
+                        {{ user.role }}
+                    </div>
                 </div>
-                <mat-icon class="text-muted icon-sm" *ngIf="!isSidebarCollapsed">more_vert</mat-icon>
+
+                <!-- Icons -->
+                <i class="bi bi-chevron-up ms-2 text-secondary opacity-50" *ngIf="!isSidebarCollapsed"
+                    style="font-size: 0.85rem;"></i>
             </button>
 
-            <mat-menu #userMenu="matMenu">
-                <button mat-menu-item>
-                    <mat-icon>person</mat-icon>
-                    <span>Profile</span>
+            <mat-menu #userMenu="matMenu" xPosition="after" yPosition="above"
+                class="rounded-4 mt-2 shadow-lg border profile-menu-custom">
+                <div class="px-3 py-2 border-bottom mb-1" *ngIf="!isSidebarCollapsed">
+                    <div class="fw-bold text-dark">{{ user.fullName }}</div>
+                    <div class="text-muted small">{{ user.email }}</div>
+                </div>
+                <!-- <button mat-menu-item class="rounded-2 mx-1 my-1" style="min-width: 180px;">
+                    <mat-icon class="text-secondary">badge</mat-icon>
+                    <span>My Profile</span>
                 </button>
-                <button mat-menu-item (click)="logout()">
-                    <mat-icon>logout</mat-icon>
-                    <span>Logout</span>
+                <button mat-menu-item class="rounded-2 mx-1 my-1">
+                    <mat-icon class="text-secondary">settings</mat-icon>
+                    <span>Settings</span>
+                </button> -->
+                <div class="dropdown-divider my-1"></div>
+                <button mat-menu-item (click)="logout()" class="rounded-2 mx-1 my-1 text-danger">
+                    <mat-icon class="text-danger">logout</mat-icon>
+                    <span>Sign Out</span>
                 </button>
             </mat-menu>
         </div>
